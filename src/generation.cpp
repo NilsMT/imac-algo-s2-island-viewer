@@ -3,6 +3,7 @@
 #include "noise.hpp"
 #include "raylib.h"
 
+#include "utils/pathUtils.hpp"
 #include "utils/raylibUtils.hpp"
 #include <algorithm> // for std::clamp
 
@@ -88,21 +89,23 @@ void generateHeightmap(AppContext& context) {
             return (perlinNoiseSeeded(p * context.imageGenerationParameters.noiseScale, context.imageGenerationParameters.noiseSeed) * 0.5f + 0.5f);
         });
 
-    // exemple conversion from heightmap to color image
+
+    //NOTE: loaded color map way
+    //open color map
+    std::filesystem::path colorPath = pathUtils::make_absolute_path("resources/color_map_16.png");
+    Image colorMap = LoadImage(colorPath.string().c_str());
+
+    //retrieve color accordingly
     context.image = TransformImage<float, Color>(context.heightmapImage, [&](float const& v, int const, int const) {
-        if (v < 0.3f)
-        {
-            return color_from({ 70, 130, 180 }); // water
-        }
-        else if (v < 0.5f)
-        {
-            return color_from({ 238, 214, 175 }); // sand
-        }
-        else
-        {
-            return color_from({ 34, 139, 34 }); // grass
-        }
-        
+        float lerpv = v*colorMap.width; //scale to fit map size
+        Color color1 = GetImageColor(colorMap, std::floor(lerpv), 0); //color before lerpv
+        Color color2 = GetImageColor(colorMap, std::ceil(lerpv), 0); //color after lerpv
+        Color color = ColorLerp(
+            color1,color2,
+            lerpv - std::floor(lerpv)
+        ); //lerp value is to get value between both int (i.e 100.5 - 100)
+
+        return color;
     }, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
 
     context.texture = LoadTextureFromImage(context.image);
