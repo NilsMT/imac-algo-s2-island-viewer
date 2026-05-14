@@ -2,25 +2,24 @@ https://dsmte.github.io/Learn--cpp_programming/Subjects/IMAC2028/S2/sujet
 
 # Répartition des tâches
 
-- Bruit fractal (FBM)
-- Générer heightmap + couleur : Nils
-- Poisson disk sampling (2D) + placement en 3D : Matthieu
-- Interface minimum
-    - Regénérer la heightmap
-    - Regénérer le mesh 3D
-    - Regénérer le poisson disk sampling
-    - Paramètres (seed, size, height range)
-- Améliorations
-    - Colormap builder
-    - Algorithmes différents de heightmap
-    - Variation placement d'objet (taille, rotation)
-    - Placement d'objet avec des conditions (pentes, hauteur)
-    - Liste de modèles 3D à placer of 3D models that can be placed
-        - Importer un modèle 3D à la liste
-    - Biomes (colormap, liste d'objets, influence sur la hauteur)
-    - Connecter les îles avec des ponts, ou par la terre
+> 🚧 : En cours ✅ : Fini ❌ : À faire
 
-> End product would run on heightmap, biome map, colormap (a gradient, maybe for each biome)
+| Fait | Catégorie       | Tâche                                                       | Qui      |
+| ---- | --------------- | ----------------------------------------------------------- | -------- |
+| 🚧   | -               | Bruit fractal (FBM)                                         | Matthieu |
+| 🚧   | -               | Générer heightmap + couleur                                 | Nils     |
+| ❌   | -               | Poisson disk sampling (2D) + placement en 3D                | Matthieu |
+| ❌   | 🖥️ Interface    | Regénérer la heightmap                                      | -        |
+| ❌   | 🖥️ Interface    | Regénérer le mesh 3D                                        | -        |
+| ❌   | 🖥️ Interface    | Regénérer le poisson disk sampling                          | -        |
+| ❌   | 🖥️ Interface    | Paramètres (seed, size, height range)                       | -        |
+| ❌   | ✨ Amélioration | Colormap builder                                            | -        |
+| ❌   | ✨ Amélioration | Algorithmes différents de heightmap                         | -        |
+| ❌   | ✨ Amélioration | Variation placement d'objet (taille, rotation)              | -        |
+| ❌   | ✨ Amélioration | Placement d'objet avec des conditions (pentes, hauteur)     | -        |
+| ❌   | ✨ Amélioration | Liste de modèles 3D à placer                                | -        |
+| ❌   | ✨ Amélioration | Biomes (colormap, liste d'objets, influence sur la hauteur) | -        |
+| ❌   | ✨ Amélioration | Connecter les îles avec des ponts, ou par la terre          | -        |
 
 # Informations supplémentaires
 
