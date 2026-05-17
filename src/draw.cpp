@@ -45,10 +45,6 @@ void drawCubes(AppContext const& context, Matrix const& terrainCentering)
 }
 
 void drawImGui(AppContext& context) {
-    if(ImGui::Button("Generate random positions")) {
-        generateObjectsPositions(context);
-    }
-
     if (ImGui::CollapsingHeader("Objects", ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::SliderFloat("Cube Scale", &context.cubeScale, 0.01f, 1.0f);
     }
@@ -73,8 +69,11 @@ void drawImGui(AppContext& context) {
             generateHeightmap(context);
         }
         //regen mesh
-        if (ImGui::Button("Regenerate Mesh And Object Placement")) {
+        if (ImGui::Button("Regenerate Mesh")) {
             regenerateMeshFromImage(context);
+        }
+        //regen position
+        if(ImGui::Button("Regenerate Objects")) {
             generateObjectsPositions(context);
         }
         //regen all
