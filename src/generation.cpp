@@ -99,11 +99,21 @@ void generateHeightmap(AppContext& context) {
     context.image = TransformImage<float, Color>(context.heightmapImage, [&](float const& v, int const, int const) {
         float lerpv = v*colorMap.width; //scale to fit map size
         Color color1 = GetImageColor(colorMap, std::floor(lerpv), 0); //color before lerpv
-        Color color2 = GetImageColor(colorMap, std::ceil(lerpv), 0); //color after lerpv
+        Color color2;
+        
+        //if there is no color after lerpv
+        if (lerpv == colorMap.width) {
+            color2 = color1;
+        } else {
+            color2 = GetImageColor(colorMap, std::ceil(lerpv), 0); //color after lerpv
+        }
+        
+
+        //lerp value is to get value between both int (i.e 100.5 - 100)
         Color color = ColorLerp(
             color1,color2,
             lerpv - std::floor(lerpv)
-        ); //lerp value is to get value between both int (i.e 100.5 - 100)
+        );
 
         return color;
     }, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
