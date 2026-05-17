@@ -10,10 +10,10 @@ https://dsmte.github.io/Learn--cpp_programming/Subjects/IMAC2028/S2/sujet
 | 🚧   | -               | Bruit fractal (FBM)                                                              | Matthieu |
 | 🚧   | -               | Générer heightmap + couleur                                                      | Nils     |
 | ❌   | -               | Poisson disk sampling (2D) + placement en 3D                                     | Matthieu |
-| ❌   | 🖥️ Interface    | Regénérer la heightmap                                                           | -        |
-| ❌   | 🖥️ Interface    | Regénérer le mesh 3D                                                             | -        |
+| ✅   | 🖥️ Interface    | Regénérer la heightmap                                                           | Nils     |
+| ✅   | 🖥️ Interface    | Regénérer le mesh 3D                                                             | Nils     |
 | ❌   | 🖥️ Interface    | Regénérer le poisson disk sampling                                               | -        |
-| ❌   | 🖥️ Interface    | Paramètres (seed, size, height range)                                            | -        |
+| ✅   | 🖥️ Interface    | Paramètres (seed, size, height range)                                            | Nils     |
 | ❌   | ✨ Amélioration | Colormap builder                                                                 | -        |
 | ❌   | ✨ Amélioration | Coloration avancé (ex: mélange en fonction de la pente, d'un type de biome, etc) | -        |
 | ❌   | ✨ Amélioration | Algorithmes différents de heightmap (Simplex, Worley, etc) (+ les combinés)      | -        |

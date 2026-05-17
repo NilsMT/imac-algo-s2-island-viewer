@@ -49,8 +49,40 @@ void drawImGui(AppContext& context) {
         generateObjectsPositions(context);
     }
 
-    if (ImGui::CollapsingHeader("objects", ImGuiTreeNodeFlags_DefaultOpen)) {
+    if (ImGui::CollapsingHeader("Objects", ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::SliderFloat("Cube Scale", &context.cubeScale, 0.01f, 1.0f);
+    }
+
+    if (ImGui::CollapsingHeader("Heightmap", ImGuiTreeNodeFlags_DefaultOpen)) {
+        //checkbox for random seed
+        ImGui::Checkbox("Random Seed",&context.imageGenerationParameters.isSeedRandom);
+
+        //manual seed
+        ImGui::InputInt("Seed",&context.imageGenerationParameters.noiseSeed);
+
+        //image resolution
+        ImGui::SliderInt("Resolution",&context.imageGenerationParameters.resolution,16,1024);
+
+        //noise scale
+        ImGui::SliderFloat("Noise Scale",&context.imageGenerationParameters.noiseScale, 0.01f, 10.0f);
+    }
+
+    if (ImGui::CollapsingHeader("Regenerations", ImGuiTreeNodeFlags_DefaultOpen)) {
+        //regen heightmap (with random or manual seed)
+        if (ImGui::Button("Regenerate Heightmap")) {
+            generateHeightmap(context);
+        }
+        //regen mesh
+        if (ImGui::Button("Regenerate Mesh And Object Placement")) {
+            regenerateMeshFromImage(context);
+            generateObjectsPositions(context);
+        }
+        //regen all
+        if (ImGui::Button("Regenerate All")) {
+            generateHeightmap(context);
+            regenerateMeshFromImage(context);
+            generateObjectsPositions(context);
+        }
     }
 }
 

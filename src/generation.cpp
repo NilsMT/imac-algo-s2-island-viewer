@@ -82,6 +82,11 @@ void generateHeightmap(AppContext& context) {
 
     int const resolution = std::max(1, context.imageGenerationParameters.resolution);
 
+    //random seed or not
+    if (&context.imageGenerationParameters.isSeedRandom) {
+        context.imageGenerationParameters.noiseSeed = rand();
+    }
+
     context.heightmapImage = GenImageFromNoiseFunction<float>(resolution, resolution, PIXELFORMAT_UNCOMPRESSED_R32,
         [&](glm::vec2 const& p)->float {
             // TODO(student): implement stack based noise and island mask
