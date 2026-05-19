@@ -42,7 +42,28 @@ float perlinNoise(glm::vec2 const& position) {
     return glm::perlin(position);
 }
 
+//perlin
+
 float perlinNoiseSeeded(glm::vec2 const& position, int seed) {
+    // Cache computed offset because the same seed is used for many samples per frame.
+    static int cachedSeed {};
+    static glm::vec2 cachedOffset {};
+
+    if (seed != cachedSeed) {
+        cachedSeed = seed;
+        cachedOffset = seedToOffset2D(seed);
+    }
+
+    return glm::perlin(position + cachedOffset);
+}
+
+//simplex
+
+float simplexNoise(glm::vec2 const& position) {
+    return glm::simplex(position);
+}
+
+float simplexNoiseSeeded(glm::vec2 const& position, int seed) {
     // Cache computed offset because the same seed is used for many samples per frame.
     static int cachedSeed {};
     static glm::vec2 cachedOffset {};
