@@ -110,8 +110,36 @@ void drawImGui(AppContext& context) {
             context.imageGenerationData.colorMaps, 
             IM_ARRAYSIZE(context.imageGenerationData.colorMaps)
         );
+        
+
+
+        ImGui::Separator();
+
+
+        
+        //reload heightmap color
+        if (ImGui::Button("Reload Color Map")) {
+            generateHeightmap(context);
+        }
+
+        //regen heightmap
+        if (ImGui::Button("Regenerate Heightmap")) {
+            setupSeed(context);
+            generateHeightmap(context);
+        }
+
+        //regen mesh
+        if (ImGui::Button("Regenerate Mesh")) {
+            regenerateMeshFromImage(context);
+        }
     }
 
+
+
+    ImGui::Separator();
+
+
+    
     if (ImGui::CollapsingHeader("Object", ImGuiTreeNodeFlags_DefaultOpen)) {
         //cube size
         ImGui::SliderFloat("Cube Scale", &context.cubeScale, 0.01f, 1.0f);
@@ -131,12 +159,6 @@ void drawImGui(AppContext& context) {
             ImGui::SliderFloat3("Rotation Offset", (float*)&context.pointsGenerationParameters.rotationOffset, 0.0f, 360.0f);
         }
 
-
-        
-        ImGui::Separator();
-
-
-        
         //checkbox for random object scale
         ImGui::Checkbox("Random Object Scale",&context.pointsGenerationParameters.isScaleRandom);
 
@@ -145,29 +167,6 @@ void drawImGui(AppContext& context) {
         if (context.pointsGenerationParameters.isRotationRandom) {
             ImGui::SliderFloat3("Scale Offset", (float*)&context.pointsGenerationParameters.scaleOffset, 0.0f, 10.0f);
         }
-    }
-
-    if (ImGui::CollapsingHeader("Regeneration", ImGuiTreeNodeFlags_DefaultOpen)) {
-        //reload heightmap color
-        if (ImGui::Button("Reload Color Map")) {
-            generateHeightmap(context);
-        }
-        
-        //regen heightmap
-        if (ImGui::Button("Regenerate Heightmap")) {
-            setupSeed(context);
-            generateHeightmap(context);
-        }
-
-        //regen mesh
-        if (ImGui::Button("Regenerate Mesh")) {
-            regenerateMeshFromImage(context);
-        }
-
-        //replace cubes
-        if(ImGui::Button("Regenerate Objects")) {
-            generateObjectsPositions(context);
-        }
 
 
         
@@ -175,12 +174,23 @@ void drawImGui(AppContext& context) {
 
 
         
-        //regen all
-        if (ImGui::Button("Regenerate All")) {
-            generateHeightmap(context);
-            regenerateMeshFromImage(context);
+        //replace cubes
+        if(ImGui::Button("Regenerate Objects")) {
             generateObjectsPositions(context);
         }
+    }
+
+
+
+    ImGui::Separator();
+
+
+    
+    //regen all
+    if (ImGui::Button("Regenerate All")) {
+        generateHeightmap(context);
+        regenerateMeshFromImage(context);
+        generateObjectsPositions(context);
     }
 }
 
