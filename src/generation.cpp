@@ -99,7 +99,9 @@ void generateHeightmap(AppContext& context) {
 
     //NOTE: loaded color map way
     //open color map
-    std::filesystem::path colorPath = pathUtils::make_absolute_path("resources/color_map_16.png");
+    std::filesystem::path colorPath = pathUtils::make_absolute_path(
+        context.imageGenerationData.colorMaps[context.imageGenerationParameters.selectedColorMap]
+    );
     Image colorMap = LoadImage(colorPath.string().c_str());
 
     context.image = TransformImage<float, Color>(context.heightmapImage, [&](float const& v, int const, int const) {
