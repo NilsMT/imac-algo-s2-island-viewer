@@ -99,32 +99,31 @@ void generateHeightmap(AppContext& context) {
 
     //NOTE: loaded color map way
     //open color map
-    std::filesystem::path colorPath = pathUtils::make_absolute_path(
-        context.imageGenerationData.colorMaps[context.imageGenerationParameters.selectedColorMap]
-    );
+    std::filesystem::path colorPath = pathUtils::make_absolute_path("resources/color_map_16.png");
     Image colorMap = LoadImage(colorPath.string().c_str());
 
-    //retrieve color accordingly
     context.image = TransformImage<float, Color>(context.heightmapImage, [&](float const& v, int const, int const) {
-        float lerpv = v*colorMap.width; //scale to fit map size
-        Color color1 = GetImageColor(colorMap, std::floor(lerpv), 0); //color before lerpv
-        Color color2;
-        
-        //if there is no color after lerpv
-        if (lerpv == colorMap.width) {
-            color2 = color1;
-        } else {
-            color2 = GetImageColor(colorMap, std::ceil(lerpv), 0); //color after lerpv
-        }
-        
+        //clamp v + scale to image width
+        float lerpv = std::clamp(v, 0.0f, 1.0f) * (colorMap.width - 1);
 
-        //lerp value is to get value between both int (i.e 100.5 - 100)
-        Color color = ColorLerp(
-            color1,color2,
-            lerpv - std::floor(lerpv)
-        );
+        //clamp lerpv
+        lerpv = std::clamp(lerpv, 0.0f, static_cast<float>(colorMap.width - 1));
 
-        return color;
+        //get near pixels
+        int x0 = int(std::floor(lerpv));
+        int x1 = int(std::ceil(lerpv));
+
+        //clamp idx
+        x0 = std::clamp(x0, 0, colorMap.width - 1);
+        x1 = std::clamp(x1, 0, colorMap.width - 1);
+
+        //get cols
+        Color color1 = GetImageColor(colorMap, x0, 0);
+        Color color2 = GetImageColor(colorMap, x1, 0);
+
+        //lerp
+        float lerpFactor = lerpv - x0; // [0, 1]
+        return ColorLerp(color1, color2, lerpFactor);
     }, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
 
     context.texture = LoadTextureFromImage(context.image);
