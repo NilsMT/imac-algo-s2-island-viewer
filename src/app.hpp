@@ -3,12 +3,14 @@
 #include "raylib.h"
 #include "glm/glm.hpp"
 #include <vector>
+#include <string>
 
 struct ImageGenerationParameters {
-    int noiseSeed { 0 };
-    bool isSeedRandom { true };
-    float noiseScale { 4.0f };
-    int resolution { 256 };
+    int noiseSeed = 0;
+    bool isSeedRandom = true;
+    float noiseScale = 4.0f;
+    int resolution = 256;
+    std::string heightmapPath = "resources/color_map_island_16.png";
 };
 
 struct PointsGenerationParameters {

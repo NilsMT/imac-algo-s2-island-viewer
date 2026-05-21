@@ -83,7 +83,7 @@ void generateHeightmap(AppContext& context) {
     int const resolution = std::max(1, context.imageGenerationParameters.resolution);
 
     //random seed or not
-    if (&context.imageGenerationParameters.isSeedRandom) {
+    if (context.imageGenerationParameters.isSeedRandom) {
         context.imageGenerationParameters.noiseSeed = rand();
     }
 
@@ -97,7 +97,7 @@ void generateHeightmap(AppContext& context) {
 
     //NOTE: loaded color map way
     //open color map
-    std::filesystem::path colorPath = pathUtils::make_absolute_path("resources/color_map_16.png");
+    std::filesystem::path colorPath = pathUtils::make_absolute_path(context.imageGenerationParameters.heightmapPath);
     Image colorMap = LoadImage(colorPath.string().c_str());
 
     //retrieve color accordingly
