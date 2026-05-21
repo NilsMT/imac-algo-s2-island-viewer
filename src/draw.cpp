@@ -103,12 +103,13 @@ void drawImGui(AppContext& context) {
         //noise scale
         ImGui::SliderFloat("Noise Scale",&context.imageGenerationParameters.noiseScale, 0.01f, 10.0f);
 
-        //heightmap path
-        //https://stackoverflow.com/questions/69046648/using-stdstring-in-imguiinputtext
-        char buf[256];
-        strncpy(buf, context.imageGenerationParameters.heightmapPath.c_str(), sizeof(buf));
-        if (ImGui::InputText("Heightmap Path", buf, sizeof(buf)))
-            context.imageGenerationParameters.heightmapPath = buf;
+        //color map
+        ImGui::Combo(
+            "Color Map", 
+            &context.imageGenerationParameters.selectedColorMap, 
+            context.imageGenerationData.colorMaps, 
+            IM_ARRAYSIZE(context.imageGenerationData.colorMaps)
+        );
     }
 
     if (ImGui::CollapsingHeader("Object", ImGuiTreeNodeFlags_DefaultOpen)) {
@@ -125,10 +126,9 @@ void drawImGui(AppContext& context) {
         ImGui::Checkbox("Random Object Rotations",&context.pointsGenerationParameters.isRotationRandom);
 
         //params for random object rotation
+        //https://github.com/ocornut/imgui/issues/779
         if (context.pointsGenerationParameters.isRotationRandom) {
-            ImGui::SliderFloat("Rotation offset x",&context.pointsGenerationParameters.rotationOffset.x,0.f,360.f);
-            ImGui::SliderFloat("Rotation offset y",&context.pointsGenerationParameters.rotationOffset.y,0.f,360.f);
-            ImGui::SliderFloat("Rotation offset z",&context.pointsGenerationParameters.rotationOffset.z,0.f,360.f);
+            ImGui::SliderFloat3("Rotation Offset", (float*)&context.pointsGenerationParameters.rotationOffset, 0.0f, 360.0f);
         }
 
 
@@ -141,16 +141,15 @@ void drawImGui(AppContext& context) {
         ImGui::Checkbox("Random Object Scale",&context.pointsGenerationParameters.isScaleRandom);
 
         //params for random object scale
+        //https://github.com/ocornut/imgui/issues/779
         if (context.pointsGenerationParameters.isRotationRandom) {
-            ImGui::SliderFloat("Scale offset x",&context.pointsGenerationParameters.scaleOffset.x,0.f,10.f);
-            ImGui::SliderFloat("Scale offset y",&context.pointsGenerationParameters.scaleOffset.y,0.f,10.f);
-            ImGui::SliderFloat("Scale offset z",&context.pointsGenerationParameters.scaleOffset.z,0.f,10.f);
+            ImGui::SliderFloat3("Scale Offset", (float*)&context.pointsGenerationParameters.scaleOffset, 0.0f, 10.0f);
         }
     }
 
     if (ImGui::CollapsingHeader("Regeneration", ImGuiTreeNodeFlags_DefaultOpen)) {
         //reload heightmap color
-        if (ImGui::Button("Reload Heightmap Color")) {
+        if (ImGui::Button("Reload Color Map")) {
             generateHeightmap(context);
         }
         

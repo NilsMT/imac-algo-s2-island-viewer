@@ -6,12 +6,19 @@
 #include <string>
 #include <cmath>
 
+struct ImageGenerationData {
+        const char* colorMaps[4] = { 
+            "resources/cm_island_16.png","resources/cm_basalt_16.png",
+            "resources/cm_elevation_16.png","resources/cm_rainbow_16.png" 
+        };
+};
+
 struct ImageGenerationParameters {
     int noiseSeed { 0 };
     bool isSeedRandom { true };
     float noiseScale { 4.0f };
     int resolution { 256 };
-    std::string heightmapPath { "resources/color_map_island_16.png" };
+    int selectedColorMap { 0 };
 };
 
 struct PointsGenerationParameters {
@@ -50,6 +57,8 @@ struct AppContext {
 
     // Parameters for object positions generation
     PointsGenerationParameters pointsGenerationParameters;
+
+    ImageGenerationData imageGenerationData;
 
     // Parameters for island generation
     ImageGenerationParameters imageGenerationParameters;
