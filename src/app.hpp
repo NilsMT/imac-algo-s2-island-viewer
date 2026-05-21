@@ -23,7 +23,7 @@ struct ImageGenerationParameters {
 
 struct PointsGenerationParameters {
     bool isScaleRandom { true };
-    glm::vec3 scaleOffset { 0.5f, 0.5f, 0.5f };
+    glm::vec3 scaleOffset { 0.f, 0.5f, 0.f };
     bool isRotationRandom { true };
     glm::vec3 rotationOffset { 0.f, 360.f, 0.f };
     float poissonRadius { 1.0f };
