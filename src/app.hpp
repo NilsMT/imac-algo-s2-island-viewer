@@ -4,16 +4,22 @@
 #include "glm/glm.hpp"
 #include <vector>
 #include <string>
+#include <cmath>
 
 struct ImageGenerationParameters {
-    int noiseSeed = 0;
-    bool isSeedRandom = true;
-    float noiseScale = 4.0f;
-    int resolution = 256;
-    std::string heightmapPath = "resources/color_map_island_16.png";
+    int noiseSeed { 0 };
+    bool isSeedRandom { true };
+    float noiseScale { 4.0f };
+    int resolution { 256 };
+    std::string heightmapPath { "resources/color_map_island_16.png" };
 };
 
 struct PointsGenerationParameters {
+    bool isScaleRandom { true };
+    glm::vec3 scaleOffset { 0.5f, 0.5f, 0.5f };
+    bool isRotationRandom { true };
+    glm::vec3 rotationOffset { 0.f, 360.f, 0.f };
+    float poissonRadius { 1.0f };
     // TODO(student): add parameters for points generation (ex: poisson disk radius, etc).
 };
 

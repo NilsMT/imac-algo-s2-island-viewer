@@ -17,7 +17,7 @@ https://dsmte.github.io/Learn--cpp_programming/Subjects/IMAC2028/S2/sujet
 | ❌   | ✨ Amélioration | Colormap builder                                                                        | -        |
 | ❌   | ✨ Amélioration | Coloration avancé (ex: mélange en fonction de la pente, d'un type de biome, etc)        | -        |
 | 🚧   | ✨ Amélioration | Algorithmes différents de heightmap (Simplex, Worley, etc) (+ les combinés) + Interface | -        |
-| ❌   | ✨ Amélioration | Variation placement d'objet (taille, rotation)                                          | -        |
+| ✅   | ✨ Amélioration | Variation placement d'objet (taille, rotation)                                          | -        |
 | ❌   | ✨ Amélioration | Placement d'objet avec des conditions (pentes, hauteur)                                 | -        |
 | ❌   | ✨ Amélioration | Importer un modèles 3D (libre de droits)à la place du cube                              | -        |
 | ❌   | ✨ Amélioration | Liste de modèles 3D (libre de droits) à placer avec conditions                          | -        |

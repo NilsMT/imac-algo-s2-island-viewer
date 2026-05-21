@@ -31,51 +31,150 @@ void drawCubes(AppContext const& context, Matrix const& terrainCentering)
 
     float const cubeHalfHeight { 0.5f * context.cubeScale };
 
+    srand(context.imageGenerationParameters.noiseSeed);
+
     for (glm::vec3 const& pos : context.objectPositions) {
-        Matrix const objectTranslation { MatrixTranslate(
-            pos.x * context.terrainSize.x,
-            pos.z * context.terrainSize.y + cubeHalfHeight,
-            pos.y * context.terrainSize.z
-        )};
-        Matrix const centeredTranslation { MatrixMultiply(objectTranslation, terrainCentering) };
-        Matrix const scale { MatrixScale(context.cubeScale, context.cubeScale, context.cubeScale) };
-        Matrix const transform { MatrixMultiply(scale, centeredTranslation) };
+        //classic params
+        Matrix const objectTranslation {
+            MatrixTranslate(
+                pos.x * context.terrainSize.x,
+                pos.z * context.terrainSize.y + cubeHalfHeight,
+                pos.y * context.terrainSize.z
+            )
+        };
+        Matrix const centeredTranslation {
+            MatrixMultiply(objectTranslation, terrainCentering)
+        };
+
+        //randomization
+        Vector3 scaleOff = {0,0,0};
+        Vector3 rotOff = {0,0,0};
+        auto randF = []() { return (float)rand() / (float)RAND_MAX; };
+
+        if (context.pointsGenerationParameters.isScaleRandom) {
+            scaleOff = {
+                context.pointsGenerationParameters.scaleOffset[0] * randF(),
+                context.pointsGenerationParameters.scaleOffset[1] * randF(),
+                context.pointsGenerationParameters.scaleOffset[2] * randF()
+            };
+        };
+
+        if (context.pointsGenerationParameters.isRotationRandom) {
+            rotOff = {
+                glm::radians(context.pointsGenerationParameters.rotationOffset[0]) * randF(),
+                glm::radians(context.pointsGenerationParameters.rotationOffset[1]) * randF(),
+                glm::radians(context.pointsGenerationParameters.rotationOffset[2]) * randF()
+            };
+        };
+
+        //compute matrix
+        Matrix localScale   { MatrixScale(context.cubeScale + scaleOff.x,
+                                        context.cubeScale + scaleOff.y,
+                                        context.cubeScale + scaleOff.z) };
+        Matrix localRotate  { MatrixRotateXYZ(rotOff) };
+
+        //scale then rotate
+        Matrix localTransform { MatrixMultiply(localScale, localRotate) };
+
+        // Then apply world-space translation last
+        Matrix transform { MatrixMultiply(localTransform, centeredTranslation) };
+
         DrawMesh(context.cube, context.cubeMaterial, transform);
     }
 }
 
 void drawImGui(AppContext& context) {
-    if (ImGui::CollapsingHeader("Objects", ImGuiTreeNodeFlags_DefaultOpen)) {
-        ImGui::SliderFloat("Cube Scale", &context.cubeScale, 0.01f, 1.0f);
-    }
-
-    if (ImGui::CollapsingHeader("Heightmap", ImGuiTreeNodeFlags_DefaultOpen)) {
+    if (ImGui::CollapsingHeader("Height map", ImGuiTreeNodeFlags_DefaultOpen)) {
         //checkbox for random seed
         ImGui::Checkbox("Random Seed",&context.imageGenerationParameters.isSeedRandom);
 
         //manual seed
         ImGui::InputInt("Seed",&context.imageGenerationParameters.noiseSeed);
 
+
+        
+        ImGui::Separator();
+
+
+        
         //image resolution
         ImGui::SliderInt("Resolution",&context.imageGenerationParameters.resolution,16,1024);
 
         //noise scale
         ImGui::SliderFloat("Noise Scale",&context.imageGenerationParameters.noiseScale, 0.01f, 10.0f);
+
+        //heightmap path
+        //https://stackoverflow.com/questions/69046648/using-stdstring-in-imguiinputtext
+        char buf[256];
+        strncpy(buf, context.imageGenerationParameters.heightmapPath.c_str(), sizeof(buf));
+        if (ImGui::InputText("Heightmap Path", buf, sizeof(buf)))
+            context.imageGenerationParameters.heightmapPath = buf;
     }
 
-    if (ImGui::CollapsingHeader("Regenerations", ImGuiTreeNodeFlags_DefaultOpen)) {
-        //regen heightmap (with random or manual seed)
+    if (ImGui::CollapsingHeader("Object", ImGuiTreeNodeFlags_DefaultOpen)) {
+        //cube size
+        ImGui::SliderFloat("Cube Scale", &context.cubeScale, 0.01f, 1.0f);
+
+
+
+        ImGui::Separator();
+
+
+        
+        //checkbox for random object rotation
+        ImGui::Checkbox("Random Object Rotations",&context.pointsGenerationParameters.isRotationRandom);
+
+        //params for random object rotation
+        if (context.pointsGenerationParameters.isRotationRandom) {
+            ImGui::SliderFloat("Rotation offset x",&context.pointsGenerationParameters.rotationOffset.x,0.f,360.f);
+            ImGui::SliderFloat("Rotation offset y",&context.pointsGenerationParameters.rotationOffset.y,0.f,360.f);
+            ImGui::SliderFloat("Rotation offset z",&context.pointsGenerationParameters.rotationOffset.z,0.f,360.f);
+        }
+
+
+        
+        ImGui::Separator();
+
+
+        
+        //checkbox for random object scale
+        ImGui::Checkbox("Random Object Scale",&context.pointsGenerationParameters.isScaleRandom);
+
+        //params for random object scale
+        if (context.pointsGenerationParameters.isRotationRandom) {
+            ImGui::SliderFloat("Scale offset x",&context.pointsGenerationParameters.scaleOffset.x,0.f,10.f);
+            ImGui::SliderFloat("Scale offset y",&context.pointsGenerationParameters.scaleOffset.y,0.f,10.f);
+            ImGui::SliderFloat("Scale offset z",&context.pointsGenerationParameters.scaleOffset.z,0.f,10.f);
+        }
+    }
+
+    if (ImGui::CollapsingHeader("Regeneration", ImGuiTreeNodeFlags_DefaultOpen)) {
+        //reload color
+        if (ImGui::Button("Reload Heightmap Color")) {
+            generateHeightmap(context, true);
+        }
+
+        //regen heightmap
         if (ImGui::Button("Regenerate Heightmap")) {
             generateHeightmap(context);
         }
+
         //regen mesh
         if (ImGui::Button("Regenerate Mesh")) {
             regenerateMeshFromImage(context);
         }
-        //regen position
+
+        //replace cubes
         if(ImGui::Button("Regenerate Objects")) {
             generateObjectsPositions(context);
         }
+
+
+        
+        ImGui::Separator();
+
+
+        
         //regen all
         if (ImGui::Button("Regenerate All")) {
             generateHeightmap(context);
