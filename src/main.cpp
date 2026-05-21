@@ -48,6 +48,7 @@ int main() {
     // context.model = LoadModelFromMesh(context.mesh);                  // Load model from generated mesh
     // context.model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = context.texture; // Set map diffuse texture
 
+    setupSeed(context);
     generateHeightmap(context);
     regenerateMeshFromImage(context);
     generateObjectsPositions(context);

@@ -149,13 +149,14 @@ void drawImGui(AppContext& context) {
     }
 
     if (ImGui::CollapsingHeader("Regeneration", ImGuiTreeNodeFlags_DefaultOpen)) {
-        //reload color
+        //reload heightmap color
         if (ImGui::Button("Reload Heightmap Color")) {
-            generateHeightmap(context, true);
+            generateHeightmap(context);
         }
-
+        
         //regen heightmap
         if (ImGui::Button("Regenerate Heightmap")) {
+            setupSeed(context);
             generateHeightmap(context);
         }
 

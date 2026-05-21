@@ -63,6 +63,13 @@ float sampleHeightmap(AppContext const& context, float u, float v)
     return static_cast<float>(c.r)/255.0f;
 }
 
+void setupSeed(AppContext& context) {
+    //random seed or not
+    if (context.imageGenerationParameters.isSeedRandom) {
+        context.imageGenerationParameters.noiseSeed = rand();
+    }
+}
+
 void generateHeightmap(AppContext& context) {
 
     if (context.texture.id > 0) {
@@ -81,11 +88,6 @@ void generateHeightmap(AppContext& context) {
     }
 
     int const resolution = std::max(1, context.imageGenerationParameters.resolution);
-
-    //random seed or not
-    if (context.imageGenerationParameters.isSeedRandom) {
-        context.imageGenerationParameters.noiseSeed = rand();
-    }
 
     context.heightmapImage = GenImageFromNoiseFunction<float>(resolution, resolution, PIXELFORMAT_UNCOMPRESSED_R32,
         [&](glm::vec2 const& p)->float {

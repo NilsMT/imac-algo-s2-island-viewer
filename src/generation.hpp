@@ -8,4 +8,6 @@ void generateObjectsPositions(AppContext& context);
 
 float sampleHeightmap(AppContext const& context, float u, float v);
 
+void setupSeed(AppContext& context);
+
 void generateHeightmap(AppContext& context);
