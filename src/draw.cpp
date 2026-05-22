@@ -146,8 +146,15 @@ void drawImGui(AppContext& context) {
     if (ImGui::CollapsingHeader("Object", ImGuiTreeNodeFlags_DefaultOpen)) {
         //cube size
         ImGui::SliderFloat("Cube Scale", &context.cubeScale, 0.01f, 1.0f);
-
-
+        
+        //height treshold
+        //https://github.com/ocornut/imgui/issues/779
+        if (ImGui::SliderFloat2("Height Spawn Range", (float*)&context.pointsGenerationParameters.heightTreshold, 0.0f, 1.0f))
+        {
+            auto& ht = context.pointsGenerationParameters.heightTreshold;
+            ht.x = std::min(ht.x, ht.y);  // ensure min <= max
+            ht.y = std::max(ht.x, ht.y);
+        }
 
         ImGui::Separator();
 

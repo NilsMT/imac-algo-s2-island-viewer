@@ -33,12 +33,18 @@ void generateObjectsPositions(AppContext& context) {
     context.objectPositions.reserve(positions.size());
     for (glm::vec2 const& p : positions)
     {
-        context.objectPositions.emplace_back(
-            p.x, // x
-            p.y, // y
-            // sample height from heightmap for each point (asuming positions are normalized in [0..1] range)
-            sampleHeightmap(context, p.x, p.y)
-        );
+        float z = sampleHeightmap(context, p.x, p.y);
+
+        if (
+            context.pointsGenerationParameters.heightTreshold[0] < z &&
+            z < context.pointsGenerationParameters.heightTreshold[1]
+        ) {
+            context.objectPositions.emplace_back(
+                p.x, // x
+                p.y, // y
+                z
+            );
+        }
     }
     // TODO(student): extension - filter positions by sampled height range.
 }

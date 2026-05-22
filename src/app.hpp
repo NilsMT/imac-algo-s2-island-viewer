@@ -17,7 +17,7 @@ struct ImageGenerationData {
 struct ImageGenerationParameters {
     int noiseSeed { 0 };
     bool isSeedRandom { true };
-    float noiseScale { 4.0f };
+    float noiseScale { 5.0f };
     int resolution { 256 };
     int selectedColorMap { 0 };
     bool colorMapLerp { true };
@@ -28,6 +28,7 @@ struct PointsGenerationParameters {
     glm::vec3 scaleOffset { 0.f, 0.5f, 0.f };
     bool isRotationRandom { true };
     glm::vec3 rotationOffset { 0.f, 360.f, 0.f };
+    glm::vec2 heightTreshold = { 0.5f, 1.f };
     float poissonRadius { 1.0f };
     // TODO(student): add parameters for points generation (ex: poisson disk radius, etc).
 };
