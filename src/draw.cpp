@@ -188,6 +188,7 @@ void drawImGui(AppContext& context) {
     
     //regen all
     if (ImGui::Button("Regenerate All")) {
+        setupSeed(context);
         generateHeightmap(context);
         regenerateMeshFromImage(context);
         generateObjectsPositions(context);
