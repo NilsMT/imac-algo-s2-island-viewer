@@ -7,9 +7,10 @@
 #include <cmath>
 
 struct ImageGenerationData {
-        const char* colorMaps[4] = { 
-            "resources/cm_island_16.png","resources/cm_basalt_16.png",
-            "resources/cm_elevation_16.png","resources/cm_rainbow_16.png" 
+        const char* colorMaps[5] = { 
+            "resources/cm_island_16.png","resources/cm_moutain_16.png",
+            "resources/cm_elevation_16.png","resources/cm_rainbow_16.png",
+            "resources/cm_mesa_32.png" 
         };
 };
 
