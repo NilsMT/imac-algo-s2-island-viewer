@@ -105,16 +105,12 @@ void generateHeightmap(AppContext& context) {
     Image colorMap = LoadImage(colorPath.string().c_str());
 
     context.image = TransformImage<float, Color>(context.heightmapImage, [&](float const& v, int const, int const) {
-        //clamp v + scale to image width
+        //clamp v + scale to image width like [0, 15]
         float lerpv = std::clamp(v, 0.0f, 1.0f) * (colorMap.width - 1);
-        
+
         //get near pixels
         int x0 = int(std::floor(lerpv));
         int x1 = int(std::ceil(lerpv));
-
-        //clamp idx
-        x0 = std::clamp(x0, 0, colorMap.width - 1);
-        x1 = std::clamp(x1, 0, colorMap.width - 1);
 
         //get cols
         Color color1 = GetImageColor(colorMap, x0, 0);
