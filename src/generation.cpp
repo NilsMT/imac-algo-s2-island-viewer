@@ -125,7 +125,13 @@ void generateHeightmap(AppContext& context) {
 
         //lerp
         float lerpFactor = lerpv - x0; // [0, 1]
-        return ColorLerp(color1, color2, lerpFactor);
+
+        if (context.imageGenerationParameters.colorMapLerp) {
+            return ColorLerp(color1, color2, lerpFactor);
+        } else {
+            return color2;
+        }
+        
     }, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
 
     context.texture = LoadTextureFromImage(context.image);

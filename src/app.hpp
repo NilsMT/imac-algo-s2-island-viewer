@@ -20,6 +20,7 @@ struct ImageGenerationParameters {
     float noiseScale { 4.0f };
     int resolution { 256 };
     int selectedColorMap { 0 };
+    bool colorMapLerp { true };
 };
 
 struct PointsGenerationParameters {

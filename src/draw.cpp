@@ -110,6 +110,9 @@ void drawImGui(AppContext& context) {
             context.imageGenerationData.colorMaps, 
             IM_ARRAYSIZE(context.imageGenerationData.colorMaps)
         );
+
+        //checkbox for lerping or no
+        ImGui::Checkbox("Color Map Lerp",&context.imageGenerationParameters.colorMapLerp);
         
 
 
