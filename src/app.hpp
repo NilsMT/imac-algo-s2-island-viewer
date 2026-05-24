@@ -6,7 +6,7 @@
 
 struct ImageGenerationParameters {
     int noiseSeed { 0 };
-    bool isSeedRandom { true };
+    bool isSeedRandom { false };
     float noiseScale { 4.0f };
     int resolution { 256 };
 };
@@ -45,6 +45,8 @@ struct AppContext {
 
     // Parameters for island generation
     ImageGenerationParameters imageGenerationParameters;
+
+    int octaves = 6; // nombre d'octave pour le bruit fractal
 };
 
 Matrix getTerrainCenteringMatrix(AppContext const& context);
