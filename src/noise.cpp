@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <functional>
 
+
 namespace {
 
 // Fast integer hash function
@@ -56,6 +57,33 @@ float perlinNoiseSeeded(glm::vec2 const& position, int seed) {
 
     return perlinNoise(position + cachedOffset);
 }
+
+
+float octaveNoise(AppContext& context, glm::vec2 const& position, int seed, std::function<float(glm::vec2 const&, int)> noiseFunction) {
+    // TODO(student): Implement octave/fractal noise accumulation.
+
+    // noiseFunction est la fonction que l'on passe en entrée à notre fonction
+    // en fait, permet de dire quel fonction de bruit on veut utiliser si on en a plusieurs
+    // par exemple : perlinNoise
+
+    // Initial values
+    float value = 0.0;
+    float amplitude = .5;
+    glm::vec2 positionCopier = position;
+
+
+    // Loop of octaves
+    for (int i = 0; i < context.octaves; i++) {
+        value += amplitude * noiseFunction(positionCopier + seedToOffset2D(i), seed);
+        positionCopier.x *= 2.;
+        positionCopier.y *= 2.;
+        amplitude *= .5;
+    }
+
+    return value;
+}
+
+
 
 //simplex from https://www.researchgate.net/publication/216813608_Simplex_noise_demystified
 
@@ -154,8 +182,30 @@ float simplexNoiseSeeded(glm::vec2 const& position, int seed) {
     return simplexNoise(position + cachedOffset);
 }
 
-float octaveNoise(glm::vec2 const& position, std::function<float(glm::vec2 const&)> noiseFunction) {
+// Remarque : je me suis fondé sur le code de l'article suivant : https://thebookofshaders.com/13/?lan=fr
+
+
+float octaveNoisefloat(AppContext& context, glm::vec2 const& position, int seed, std::function<float(glm::vec2 const&, int)> noiseFunction) {
     // TODO(student): Implement octave/fractal noise accumulation.
     // Temporary fallback return directly from the provided noise function for testing.
-    return noiseFunction(position);
+
+    // noiseFunction est la fonction que l'on passe en entrée à notre fonction
+    // en fait, permet de dire quel fonction de bruit on veut utiliser si on en a plusieurs
+    // par exemple : perlinNoise
+
+    // Initial values
+    float value = 0.0;
+    float amplitude = .5;
+    glm::vec2 positionCopier = position;
+
+
+    // Loop of octaves
+    for (int i = 0; i < context.octaves; i++) {
+        value += amplitude * noiseFunction(positionCopier + seedToOffset2D(i), seed);
+        positionCopier.x *= 2.;
+        positionCopier.y *= 2.;
+        amplitude *= .5;
+    }
+
+    return value;
 }

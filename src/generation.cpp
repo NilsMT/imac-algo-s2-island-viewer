@@ -99,7 +99,10 @@ void generateHeightmap(AppContext& context) {
         [&](glm::vec2 const& p)->float {
             // TODO(student): implement stack based noise and island mask
 
-            return (perlinNoiseSeeded(p * context.imageGenerationParameters.noiseScale, context.imageGenerationParameters.noiseSeed) * 0.5f + 0.5f);
+            // return (perlinNoiseSeeded(p * context.imageGenerationParameters.noiseScale, context.imageGenerationParameters.noiseSeed) * 0.5f + 0.5f);
+            glm::vec2 toto = p * context.imageGenerationParameters.noiseScale;
+            return (octaveNoise(context, toto, context.imageGenerationParameters.noiseSeed, perlinNoiseSeeded) * 0.5f + 0.5f);
+
         });
 
 

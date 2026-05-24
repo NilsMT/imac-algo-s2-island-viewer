@@ -65,6 +65,9 @@ struct AppContext {
 
     // Parameters for island generation
     ImageGenerationParameters imageGenerationParameters;
+
+
+    int octaves = 6; // nombre d'octave pour le bruit fractal
 };
 
 Matrix getTerrainCenteringMatrix(AppContext const& context);
