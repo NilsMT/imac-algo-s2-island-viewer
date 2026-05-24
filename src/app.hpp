@@ -3,33 +3,15 @@
 #include "raylib.h"
 #include "glm/glm.hpp"
 #include <vector>
-#include <string>
-#include <cmath>
-
-struct ImageGenerationData {
-        const char* colorMaps[5] = { 
-            "resources/cm_island_16.png","resources/cm_moutain_16.png",
-            "resources/cm_elevation_16.png","resources/cm_rainbow_16.png",
-            "resources/cm_mesa_32.png" 
-        };
-};
 
 struct ImageGenerationParameters {
     int noiseSeed { 0 };
     bool isSeedRandom { true };
-    float noiseScale { 5.0f };
+    float noiseScale { 4.0f };
     int resolution { 256 };
-    int selectedColorMap { 0 };
-    bool colorMapLerp { true };
 };
 
 struct PointsGenerationParameters {
-    bool isScaleRandom { true };
-    glm::vec3 scaleOffset { 0.f, 0.5f, 0.f };
-    bool isRotationRandom { true };
-    glm::vec3 rotationOffset { 0.f, 360.f, 0.f };
-    glm::vec2 heightTreshold = { 0.5f, 1.f };
-    float poissonRadius { 1.0f };
     // TODO(student): add parameters for points generation (ex: poisson disk radius, etc).
 };
 
@@ -60,8 +42,6 @@ struct AppContext {
 
     // Parameters for object positions generation
     PointsGenerationParameters pointsGenerationParameters;
-
-    ImageGenerationData imageGenerationData;
 
     // Parameters for island generation
     ImageGenerationParameters imageGenerationParameters;
