@@ -100,8 +100,8 @@ void generateHeightmap(AppContext& context) {
             // TODO(student): implement stack based noise and island mask
 
             // return (perlinNoiseSeeded(p * context.imageGenerationParameters.noiseScale, context.imageGenerationParameters.noiseSeed) * 0.5f + 0.5f);
-            glm::vec2 toto = p * context.imageGenerationParameters.noiseScale;
-            return (octaveNoise(context, toto, context.imageGenerationParameters.noiseSeed, perlinNoiseSeeded) * 0.5f + 0.5f);
+            glm::vec2 position = p * context.imageGenerationParameters.noiseScale;
+            return (octaveNoise(context, position, context.imageGenerationParameters.noiseSeed, perlinNoiseSeeded) * 0.5f + 0.5f);
 
         });
 
