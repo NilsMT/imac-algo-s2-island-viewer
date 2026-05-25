@@ -104,7 +104,7 @@ void drawImGui(AppContext& context) {
         ImGui::SliderFloat("Noise Scale",&context.imageGenerationParameters.noiseScale, 0.01f, 10.0f);
 
         //number of octaves
-        ImGui::SliderInt("Number of octaves",&context.imageGenerationParameters.nbOctaves,16,1024);
+        ImGui::SliderInt("Number of octaves",&context.imageGenerationParameters.nbOctaves,0,16);
 
         //color map
         ImGui::Combo(
