@@ -7,7 +7,7 @@ https://dsmte.github.io/Learn--cpp_programming/Subjects/IMAC2028/S2/sujet
 
 | Fait | Catégorie       | Tâche                                                                                   | Qui      |
 | ---- | --------------- | --------------------------------------------------------------------------------------- | -------- |
-| 🚧   | -               | Bruit fractal (FBM)                                                                     | Matthieu |
+| ✅   | -               | Bruit fractal (FBM)                                                                     | Matthieu |
 | 🚧   | -               | Générer heightmap + couleur                                                             | Nils     |
 | ❌   | -               | Poisson disk sampling (2D) + placement en 3D                                            | Matthieu |
 | ✅   | 🖥️ Interface    | Regénérer la heightmap                                                                  | Nils     |
