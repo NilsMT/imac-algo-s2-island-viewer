@@ -73,7 +73,7 @@ float octaveNoise(AppContext& context, glm::vec2 const& position, int seed, std:
 
 
     // Loop of octaves
-    for (int i = 0; i < context.octaves; i++) {
+    for (int i = 0; i < context.imageGenerationParameters.nbOctaves; i++) {
         value += amplitude * noiseFunction(positionCopier + seedToOffset2D(i), seed);
         positionCopier.x *= 2.;
         positionCopier.y *= 2.;
@@ -200,7 +200,7 @@ float octaveNoisefloat(AppContext& context, glm::vec2 const& position, int seed,
 
 
     // Loop of octaves
-    for (int i = 0; i < context.octaves; i++) {
+    for (int i = 0; i < context.imageGenerationParameters.nbOctaves; i++) {
         value += amplitude * noiseFunction(positionCopier + seedToOffset2D(i), seed);
         positionCopier.x *= 2.;
         positionCopier.y *= 2.;
