@@ -48,7 +48,7 @@ Le code de l'échec est dans la branche [diamond-square-attempt](https://github.
 
 ## Avant
 
-La noise stack était simple : chaque bruit est une fonction qui prend une position et un seed, et renvoie un float.
+La noise stack était simple : chaque bruit est une fonction qui prend une position et uun seed, et renvoie un float.
 
 ```cpp
 struct Noise {
@@ -70,7 +70,7 @@ struct ImageGenerationParameters {
 
 ## Le problème
 
-Le Diamond Square est un algorithme **matriciel** — il génère une heightmap entière d'un coup, plutôt que de renvoyer une valeur par position comme `Perlin` et `Simplex`. Il fallait donc supporter deux types de bruits dans la même stack :
+Le Diamond Square est un algorithme **matriciel** : il génère une heightmap entière (`Image`) d'un coup, plutôt que de renvoyer une valeur par position comme `Perlin` et `Simplex`. Il fallait donc supporter deux types de bruits dans la même stack :
 
 - **Fonction** : `float(glm::vec2, int)` — évalué point par point (Simplex, Perlin...)
 - **Matrice** : génère une image entière, qu'on sample ensuite — mais chaque algo matriciel peut avoir une signature différente
@@ -87,7 +87,7 @@ enum NoiseType {
 
 using NoiseFunction = std::variant
     std::function<float(glm::vec2 const&, int)>, // PERLIN + SIMPLEX
-    std::function<Image(float)>                  // DS — et seulement DS
+    std::function<Image(float)>                  // DS
     //les autres algo matrice de type Image( leurs paramètres )
 >;
 
@@ -124,7 +124,8 @@ struct App {
 
 ## Pourquoi c'est pas idéal
 
-- Le variant ne peut pas couvrir toutes les signatures possibles des algos matriciels — il faudrait ajouter à la main chaque nouvelle signature dans `NoiseFunction`
+- Le variant ne peut pas couvrir toutes les signatures possibles des algos matriciels : il faudrait ajouter à la main chaque nouvelle signature dans `NoiseFunction`
 - Il faut jongler avec `std::get` / `std::get_if` partout où on utilise un bruit
-- L'interface ImGui doit s'adapter manuellement à chaque type de bruit
+- L'interface ImGui doit s'adapter manuellement à chaque type de bruit (ou alors on s'adapte à la signature de la fonction de bruit matriciel)
 - Une `noiseMatrixStack` séparée dans `AppContext` stocke les résultats des algos matriciels, ce qui crée une désynchronisation potentielle avec la `noiseStack`
+    > une option plus simple aurait été de générer la matrice pour chaque position au lieu de tout stocker une fois, mais niveau performance c'est catastrophique
