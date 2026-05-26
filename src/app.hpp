@@ -2,9 +2,22 @@
 
 #include "raylib.h"
 #include "glm/glm.hpp"
+#include "noise.hpp"
 #include <vector>
 #include <string>
 #include <cmath>
+
+enum NoiseType {
+    FUNCTION,
+    MATRIX,
+};
+
+struct Noise {
+    NoiseType type { NoiseType::FUNCTION };
+    std::function<float(glm::vec2 const&, int)> func;
+    int nbOctave {6};
+    float scale {5.f};
+};
 
 struct ImageGenerationData {
         const char* colorMaps[5] = { 
@@ -12,16 +25,24 @@ struct ImageGenerationData {
             "resources/cm_elevation_16.png","resources/cm_rainbow_16.png",
             "resources/cm_mesa_32.png" 
         };
+
+        static std::function<float(glm::vec2 const&, int)> noiseFunctions[2];
+
+        const NoiseType noiseFunctionsTypes[2] = {
+            NoiseType::FUNCTION,
+            NoiseType::MATRIX
+        };
 };
 
 struct ImageGenerationParameters {
     int noiseSeed { 0 };
     bool isSeedRandom { true };
-    float noiseScale { 5.0f };
     int resolution { 256 };
     int selectedColorMap { 0 };
     bool colorMapLerp { true };
-    int nbOctaves { 6 };
+    Image noiseImage {}; //the accumulated noise image
+    Image maskImage {}; //the mask
+    std::vector<Noise> noiseStack {};
 };
 
 struct PointsGenerationParameters {
@@ -69,6 +90,6 @@ struct AppContext {
 };
 
 Matrix getTerrainCenteringMatrix(AppContext const& context);
-float sampleHeightmap(AppContext const& context, float u, float v);
+float sampleHeightmap(Image heightmapImage, float u, float v);
 void unload(AppContext& context);
 void regenerateMeshFromImage(AppContext& context);

@@ -2,6 +2,11 @@
 #include "raymath.h"
 #include "utils/raylibUtils.hpp"
 
+std::function<float(glm::vec2 const&, int)> ImageGenerationData::noiseFunctions[2] = {
+    perlinNoiseSeeded,
+    simplexNoiseSeeded
+};
+
 void unload(AppContext& context) {
     if (context.texture.id > 0) {
         UnloadTexture(context.texture);

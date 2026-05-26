@@ -33,7 +33,7 @@ void generateObjectsPositions(AppContext& context) {
     context.objectPositions.reserve(positions.size());
     for (glm::vec2 const& p : positions)
     {
-        float z = sampleHeightmap(context, p.x, p.y);
+        float z = sampleHeightmap(context.heightmapImage, p.x, p.y);
 
         if (
             context.pointsGenerationParameters.heightTreshold[0] < z &&
@@ -47,25 +47,26 @@ void generateObjectsPositions(AppContext& context) {
         }
     }
     // TODO(student): extension - filter positions by sampled height range.
+    //TODO: position management here
 }
 
-float sampleHeightmap(AppContext const& context, float u, float v)
+float sampleHeightmap(Image heightmapImage, float u, float v)
 {
-    if (!context.heightmapImage.data || context.heightmapImage.width <= 0 || context.heightmapImage.height <= 0) return 0.0f;
+    if (!heightmapImage.data || heightmapImage.width <= 0 || heightmapImage.height <= 0) return 0.0f;
 
-    int const px = std::clamp(static_cast<int>(u * static_cast<float>(context.heightmapImage.width - 1)), 0, context.heightmapImage.width - 1);
-    int const py = std::clamp(static_cast<int>(v * static_cast<float>(context.heightmapImage.height - 1)), 0, context.heightmapImage.height - 1);
+    int const px = std::clamp(static_cast<int>(u * static_cast<float>(heightmapImage.width - 1)), 0, heightmapImage.width - 1);
+    int const py = std::clamp(static_cast<int>(v * static_cast<float>(heightmapImage.height - 1)), 0, heightmapImage.height - 1);
 
     // If the heightmap is in R32 format, we can directly read the height value as a float. 
-    if (context.heightmapImage.format == PIXELFORMAT_UNCOMPRESSED_R32)
+    if (heightmapImage.format == PIXELFORMAT_UNCOMPRESSED_R32)
     {
-        float const* heightData = static_cast<float const*>(context.heightmapImage.data);
-        int const idx = py * context.heightmapImage.width + px;
+        float const* heightData = static_cast<float const*>(heightmapImage.data);
+        int const idx = py * heightmapImage.width + px;
         return std::clamp(heightData[idx], 0.0f, 1.0f);
     }
 
     // Otherwise, we assume it's in a color format and we read the red channel as height (with normalization from [0..255] to [0..1]).
-    Color const c = GetImageColor(context.heightmapImage, px, py);
+    Color const c = GetImageColor(heightmapImage, px, py);
     return static_cast<float>(c.r)/255.0f;
 }
 
@@ -93,21 +94,57 @@ void generateHeightmap(AppContext& context) {
         context.heightmapImage = {};
     }
 
+    //reset accumulated noise
+    if (context.imageGenerationParameters.noiseImage.data) {
+        UnloadImage(context.imageGenerationParameters.noiseImage);
+        context.imageGenerationParameters.noiseImage = {};
+    }
+
     int const resolution = std::max(1, context.imageGenerationParameters.resolution);
 
+    //generate previous noises (if matrix)
+    //TODO: matrix gen
+
+    //generate accumulated noises
+    context.imageGenerationParameters.noiseImage = GenImageFromNoiseFunction<float>(resolution, resolution, PIXELFORMAT_UNCOMPRESSED_R32,
+        [&](glm::vec2 const& p)->float {
+            if (context.imageGenerationParameters.noiseStack.empty()) {
+                return 0.f;
+            }
+
+            float acc = 0.f;
+            
+            //acc
+            for (Noise const& noise : context.imageGenerationParameters.noiseStack) {
+                glm::vec2 position = p * noise.scale;
+                acc += octaveNoise(
+                    noise.nbOctave, position, context.imageGenerationParameters.noiseSeed, noise.func
+                ) * 0.5f + 0.5f; //noises are all [-1;1] ? if [0;1] *2 -1
+            }
+
+            //TODO: matrix sample + add the *0.5 + 0.5 as part of function
+
+            //div
+            acc /= static_cast<float>(context.imageGenerationParameters.noiseStack.size());
+            return acc;
+        }
+    );
+
+    //generate the mask
+    context.imageGenerationParameters.maskImage = GenImageFromNoiseFunction<float>(resolution, resolution, PIXELFORMAT_UNCOMPRESSED_R32,
+        [&](glm::vec2 const& p)->float {
+            return 1; //TODO: choose mask
+        }
+    );
+
+    //generate heightmap
     context.heightmapImage = GenImageFromNoiseFunction<float>(resolution, resolution, PIXELFORMAT_UNCOMPRESSED_R32,
         [&](glm::vec2 const& p)->float {
-            // TODO(student): implement stack based noise and island mask
+            return sampleHeightmap(context.imageGenerationParameters.maskImage,p.x,p.y) * sampleHeightmap(context.imageGenerationParameters.noiseImage,p.x,p.y);
+        }
+    );
 
-            // return (perlinNoiseSeeded(p * context.imageGenerationParameters.noiseScale, context.imageGenerationParameters.noiseSeed) * 0.5f + 0.5f);
-            glm::vec2 position = p * context.imageGenerationParameters.noiseScale;
-            return (octaveNoise(context, position, context.imageGenerationParameters.noiseSeed, perlinNoiseSeeded) * 0.5f + 0.5f);
-
-        });
-
-
-    //NOTE: loaded color map way
-    //open color map
+    //color map
     std::filesystem::path colorPath = pathUtils::make_absolute_path(
         context.imageGenerationData.colorMaps[context.imageGenerationParameters.selectedColorMap]
     );

@@ -47,6 +47,11 @@ int main() {
     // context.mesh = GenMeshHeightmap(context.image, context.terrainSize); // Generate heightmap mesh (RAM and VRAM)
     // context.model = LoadModelFromMesh(context.mesh);                  // Load model from generated mesh
     // context.model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = context.texture; // Set map diffuse texture
+    //NOTE:gen stack
+    context.imageGenerationParameters.noiseStack = {
+        Noise {NoiseType::FUNCTION,simplexNoiseSeeded,1,5.f},
+        Noise {NoiseType::FUNCTION,perlinNoiseSeeded,6,5.f}
+    };
 
     setupSeed(context);
     generateHeightmap(context);

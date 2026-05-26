@@ -59,7 +59,7 @@ float perlinNoiseSeeded(glm::vec2 const& position, int seed) {
 }
 
 
-float octaveNoise(AppContext& context, glm::vec2 const& position, int seed, std::function<float(glm::vec2 const&, int)> noiseFunction) {
+float octaveNoise(int nbOctave, glm::vec2 const& position, int seed, std::function<float(glm::vec2 const&, int)> noiseFunction) {
     // TODO(student): Implement octave/fractal noise accumulation.
 
     // noiseFunction est la fonction que l'on passe en entrée à notre fonction
@@ -69,14 +69,14 @@ float octaveNoise(AppContext& context, glm::vec2 const& position, int seed, std:
     // Initial values
     float value = 0.0;
     float amplitude = .5;
-    glm::vec2 positionCopier = position;
+    glm::vec2 pos = position;
 
 
     // Loop of octaves
-    for (int i = 0; i < context.imageGenerationParameters.nbOctaves; i++) {
-        value += amplitude * noiseFunction(positionCopier + seedToOffset2D(i), seed);
-        positionCopier.x *= 2.;
-        positionCopier.y *= 2.;
+    for (int i = 0; i < nbOctave; i++) {
+        value += amplitude * noiseFunction(pos + seedToOffset2D(i), seed);
+        pos.x *= 2.;
+        pos.y *= 2.;
         amplitude *= .5;
     }
 
@@ -180,32 +180,4 @@ float simplexNoiseSeeded(glm::vec2 const& position, int seed) {
     }
 
     return simplexNoise(position + cachedOffset);
-}
-
-// Remarque : je me suis fondé sur le code de l'article suivant : https://thebookofshaders.com/13/?lan=fr
-
-
-float octaveNoisefloat(AppContext& context, glm::vec2 const& position, int seed, std::function<float(glm::vec2 const&, int)> noiseFunction) {
-    // TODO(student): Implement octave/fractal noise accumulation.
-    // Temporary fallback return directly from the provided noise function for testing.
-
-    // noiseFunction est la fonction que l'on passe en entrée à notre fonction
-    // en fait, permet de dire quel fonction de bruit on veut utiliser si on en a plusieurs
-    // par exemple : perlinNoise
-
-    // Initial values
-    float value = 0.0;
-    float amplitude = .5;
-    glm::vec2 positionCopier = position;
-
-
-    // Loop of octaves
-    for (int i = 0; i < context.imageGenerationParameters.nbOctaves; i++) {
-        value += amplitude * noiseFunction(positionCopier + seedToOffset2D(i), seed);
-        positionCopier.x *= 2.;
-        positionCopier.y *= 2.;
-        amplitude *= .5;
-    }
-
-    return value;
 }

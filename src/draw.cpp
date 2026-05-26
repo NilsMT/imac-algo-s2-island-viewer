@@ -85,44 +85,118 @@ void drawCubes(AppContext const& context, Matrix const& terrainCentering)
 
 void drawImGui(AppContext& context) {
     if (ImGui::CollapsingHeader("Height map", ImGuiTreeNodeFlags_DefaultOpen)) {
-        //checkbox for random seed
-        ImGui::Checkbox("Random Seed",&context.imageGenerationParameters.isSeedRandom);
+        ImGui::Indent();
 
-        //manual seed
-        ImGui::InputInt("Seed",&context.imageGenerationParameters.noiseSeed);
-
-
-        
-        ImGui::Separator();
-
-
-        
         //image resolution
         ImGui::SliderInt("Resolution",&context.imageGenerationParameters.resolution,16,1024);
 
-        //noise scale
-        ImGui::SliderFloat("Noise Scale",&context.imageGenerationParameters.noiseScale, 0.01f, 10.0f);
+        if (ImGui::CollapsingHeader("Seed", ImGuiTreeNodeFlags_DefaultOpen)) {
+            ImGui::Indent();
 
-        //number of octaves
-        ImGui::SliderInt("Number of octaves",&context.imageGenerationParameters.nbOctaves,0,16);
+            //checkbox for random seed
+            ImGui::Checkbox("Random Seed",&context.imageGenerationParameters.isSeedRandom);
 
-        //color map
-        ImGui::Combo(
-            "Color Map", 
-            &context.imageGenerationParameters.selectedColorMap, 
-            context.imageGenerationData.colorMaps, 
-            IM_ARRAYSIZE(context.imageGenerationData.colorMaps)
-        );
+            //manual seed
+            ImGui::InputInt("Seed",&context.imageGenerationParameters.noiseSeed);
 
-        //checkbox for lerping or no
-        ImGui::Checkbox("Color Map Lerp",&context.imageGenerationParameters.colorMapLerp);
+            ImGui::Unindent();
+        }
+
+        if (ImGui::CollapsingHeader("Color map", ImGuiTreeNodeFlags_DefaultOpen)) {
+            ImGui::Indent();
+
+            //color map
+            ImGui::Combo(
+                "Color Map", 
+                &context.imageGenerationParameters.selectedColorMap, 
+                context.imageGenerationData.colorMaps, 
+                IM_ARRAYSIZE(context.imageGenerationData.colorMaps)
+            );
+
+            //checkbox for lerping or no
+            ImGui::Checkbox("Color Map Lerp",&context.imageGenerationParameters.colorMapLerp);
+
+            ImGui::Unindent();
+        }
+
+        if (ImGui::CollapsingHeader("Noises", ImGuiTreeNodeFlags_DefaultOpen)) {
+            ImGui::Indent();
+
+            for (int i = 0; i < context.imageGenerationParameters.noiseStack.size(); i++) {
+                Noise& noise = context.imageGenerationParameters.noiseStack[i];
+                ImGui::PushID(i);
+
+                int selectedNoise = (noise.type == context.imageGenerationData.noiseFunctionsTypes[0]) ? 0 : 1;
+                if (ImGui::Combo("Noise", &selectedNoise, "Perlin\0Simplex\0")) {
+                    noise.func = context.imageGenerationData.noiseFunctions[selectedNoise];
+                    noise.type = context.imageGenerationData.noiseFunctionsTypes[selectedNoise];
+                }
+                ImGui::SliderInt("Number of octaves", &noise.nbOctave, 0, 16);
+                ImGui::SliderFloat("Scale", &noise.scale, 0.01f, 10.f);
+
+                if (ImGui::Button("Remove Noise"))
+                    context.imageGenerationParameters.noiseStack.erase(
+                        context.imageGenerationParameters.noiseStack.begin() + i--);
+
+                ImGui::Separator();
+
+                ImGui::PopID();
+            }
+
+            if (ImGui::Button("Add Noise"))
+                context.imageGenerationParameters.noiseStack.push_back(Noise{});
+
+            ImGui::Unindent();
+        }
+
+        ImGui::Unindent();
+    }
+
+    if (ImGui::CollapsingHeader("Object", ImGuiTreeNodeFlags_DefaultOpen)) {
+        ImGui::Indent();
+
+        //cube size
+        ImGui::SliderFloat("Cube Scale", &context.cubeScale, 0.01f, 1.0f);
         
+        //height treshold
+        //https://github.com/ocornut/imgui/issues/779
+        if (ImGui::SliderFloat2("Height Spawn Range", (float*)&context.pointsGenerationParameters.heightTreshold, 0.0f, 1.0f))
+        {
+            auto& ht = context.pointsGenerationParameters.heightTreshold;
+            ht.x = std::min(ht.x, ht.y);  // ensure min <= max
+            ht.y = std::max(ht.x, ht.y);
+        }
 
+        if (ImGui::CollapsingHeader("Randomization", ImGuiTreeNodeFlags_DefaultOpen)) {
+            ImGui::Indent();
 
-        ImGui::Separator();
+            //checkbox for random object rotation
+            ImGui::Checkbox("Random Object Rotations",&context.pointsGenerationParameters.isRotationRandom);
 
+            //params for random object rotation
+            //https://github.com/ocornut/imgui/issues/779
+            if (context.pointsGenerationParameters.isRotationRandom) {
+                ImGui::SliderFloat3("Rotation Offset", (float*)&context.pointsGenerationParameters.rotationOffset, 0.0f, 360.0f);
+            }
 
-        
+            //checkbox for random object scale
+            ImGui::Checkbox("Random Object Scale",&context.pointsGenerationParameters.isScaleRandom);
+
+            //params for random object scale
+            //https://github.com/ocornut/imgui/issues/779
+            if (context.pointsGenerationParameters.isRotationRandom) {
+                ImGui::SliderFloat3("Scale Offset", (float*)&context.pointsGenerationParameters.scaleOffset, 0.0f, 10.0f);
+            }
+
+            ImGui::Unindent();
+        }
+
+        ImGui::Unindent();
+    }
+
+    if (ImGui::CollapsingHeader("Buttons", ImGuiTreeNodeFlags_DefaultOpen)) {
+        ImGui::Indent();
+
         //reload heightmap color
         if (ImGui::Button("Reload Color Map")) {
             generateHeightmap(context);
@@ -138,73 +212,21 @@ void drawImGui(AppContext& context) {
         if (ImGui::Button("Regenerate Mesh")) {
             regenerateMeshFromImage(context);
         }
-    }
 
-
-
-    ImGui::Separator();
-
-
-    
-    if (ImGui::CollapsingHeader("Object", ImGuiTreeNodeFlags_DefaultOpen)) {
-        //cube size
-        ImGui::SliderFloat("Cube Scale", &context.cubeScale, 0.01f, 1.0f);
-        
-        //height treshold
-        //https://github.com/ocornut/imgui/issues/779
-        if (ImGui::SliderFloat2("Height Spawn Range", (float*)&context.pointsGenerationParameters.heightTreshold, 0.0f, 1.0f))
-        {
-            auto& ht = context.pointsGenerationParameters.heightTreshold;
-            ht.x = std::min(ht.x, ht.y);  // ensure min <= max
-            ht.y = std::max(ht.x, ht.y);
-        }
-
-        ImGui::Separator();
-
-
-        
-        //checkbox for random object rotation
-        ImGui::Checkbox("Random Object Rotations",&context.pointsGenerationParameters.isRotationRandom);
-
-        //params for random object rotation
-        //https://github.com/ocornut/imgui/issues/779
-        if (context.pointsGenerationParameters.isRotationRandom) {
-            ImGui::SliderFloat3("Rotation Offset", (float*)&context.pointsGenerationParameters.rotationOffset, 0.0f, 360.0f);
-        }
-
-        //checkbox for random object scale
-        ImGui::Checkbox("Random Object Scale",&context.pointsGenerationParameters.isScaleRandom);
-
-        //params for random object scale
-        //https://github.com/ocornut/imgui/issues/779
-        if (context.pointsGenerationParameters.isRotationRandom) {
-            ImGui::SliderFloat3("Scale Offset", (float*)&context.pointsGenerationParameters.scaleOffset, 0.0f, 10.0f);
-        }
-
-
-        
-        ImGui::Separator();
-
-
-        
         //replace cubes
         if(ImGui::Button("Regenerate Objects")) {
             generateObjectsPositions(context);
         }
-    }
 
+        //regen all
+        if (ImGui::Button("Regenerate All")) {
+            setupSeed(context);
+            generateHeightmap(context);
+            regenerateMeshFromImage(context);
+            generateObjectsPositions(context);
+        }
 
-
-    ImGui::Separator();
-
-
-    
-    //regen all
-    if (ImGui::Button("Regenerate All")) {
-        setupSeed(context);
-        generateHeightmap(context);
-        regenerateMeshFromImage(context);
-        generateObjectsPositions(context);
+        ImGui::Unindent();
     }
 }
 
