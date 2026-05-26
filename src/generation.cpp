@@ -98,26 +98,36 @@ void generateHeightmap(AppContext& context) {
 
     //generate previous noises (if matrix)
     //TODO: matrix gen
-
+    for (Noise const& noise : context.imageGenerationParameters.noiseStack) {
+        if (noise.type == NoiseType::MATRIX) {
+            context.noiseMatrixStack.push_back(std::get<Image>(noise.func));
+        }
+    }
     //generate accumulated noises
     context.imageGenerationParameters.noiseImage = GenImageFromNoiseFunction<float>(resolution, resolution, PIXELFORMAT_UNCOMPRESSED_R32,
         [&](glm::vec2 const& p)->float {
             if (context.imageGenerationParameters.noiseStack.empty()) {
                 return 0.f;
             }
-
             float acc = 0.f;
+            int matr = 0; //counter ++ if on matrix based noise
             
             //acc
-            for (Noise const& noise : context.imageGenerationParameters.noiseStack) {
+            for (int i = 0; i <= context.imageGenerationParameters.noiseStack.size(); i++) {
+                Noise const& noise = context.imageGenerationParameters.noiseStack[i];
                 glm::vec2 position = p * noise.scale;
-                acc += octaveNoise(
-                    noise.nbOctave, position, context.imageGenerationParameters.noiseSeed, noise.func
-                );
+                if (noise.type == NoiseType::FUNCTION) {
+                    acc += octaveNoise(
+                        noise.nbOctave, position, context.imageGenerationParameters.noiseSeed,
+                        //get function to pass it
+                        std::get<std::function<float(glm::vec2 const&, int)>>(noise.func)
+                    );
+                } else {
+                    acc += sampleHeightmap(context.noiseMatrixStack[i],p.x,p.y);
+                    matr++;
+                }
             }
-
             //TODO: matrix sample
-
             //div
             acc /= static_cast<float>(context.imageGenerationParameters.noiseStack.size());
             return acc;

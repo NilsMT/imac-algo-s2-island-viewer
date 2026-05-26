@@ -2,9 +2,15 @@
 #include "raymath.h"
 #include "utils/raylibUtils.hpp"
 
-std::function<float(glm::vec2 const&, int)> ImageGenerationData::noiseFunctions[2] = {
+using NoiseFunction = std::variant<
+    std::function<float(glm::vec2 const&, int)>, //perlin + simplex
+    std::function<Image(float)> //diamond square
+>;
+
+NoiseFunction ImageGenerationData::noiseFunctions[3] = {
     perlinNoiseSeeded,
-    simplexNoiseSeeded
+    simplexNoiseSeeded,
+    diamondSquare,
 };
 
 void unload(AppContext& context) {

@@ -1,11 +1,13 @@
 
 #include "noise.hpp"
+#include "utils/randFloat.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/noise.hpp>
 
 #include <cstdint>
 #include <functional>
+#include <algorithm> 
 
 
 namespace {
@@ -168,4 +170,140 @@ float simplexNoiseSeeded(glm::vec2 const& position, int seed) {
     }
 
     return simplexNoise(position + cachedOffset);
+}
+
+
+////////////////////////////////////////////////
+////////////////////////////////////////////////
+
+// ATTROCIOUS DIAMOND SQUARE INTEGRATION ATTEMPTS
+// NOT DONE
+
+// https://github.com/NilsMT/imac-wk-prog-algo-1/blob/main/EXOS.md#-diamond-square
+
+////////////////////////////////////////////////
+////////////////////////////////////////////////
+
+//config (you can change these)
+const int n = 8;
+const float hMin = 1.0f;
+const float hMax = 8.0f;
+
+//globals (don't touch)
+float mapMin = 0;
+float mapMax = 0;
+const size_t mapSize = pow(2, n) + 1;
+using arrayT = std::array<std::array<float, mapSize>, mapSize>;
+
+void fillArr(arrayT& arr, float value) {
+    for (auto& row : arr) {
+        for (auto& item : row) {
+            item = value;
+        }
+    }
+}
+
+void updateMapMinMax(float value) {
+    if (value < mapMin) {
+        mapMin = value;
+    }
+    if (value > mapMax) {
+        mapMax = value;
+    }
+}
+
+/////////////////////////////////////
+
+void square_step(arrayT& arr, int size, int half, float r) {
+    for (int iy = 0; iy < mapSize - 1; iy += size) {
+        for (int ix = 0; ix < mapSize - 1; ix += size) {
+            float x = arr[iy][ix]; //TL
+            updateMapMinMax(x);
+            float y = arr[iy][ix + size]; //TR
+            updateMapMinMax(y);
+            float z = arr[iy + size][ix]; //BL
+            updateMapMinMax(z);
+            float w = arr[iy + size][ix + size]; //BR
+            updateMapMinMax(w);
+            float c = (x + y + z + w) / 4; //C
+            c += randF(-r, r);
+            updateMapMinMax(c);
+            arr[iy + half][ix + half] = c;
+        }
+    }
+}
+
+void diamond_step(arrayT& arr, int size, int half, float r) {
+    for (int iy = 0; iy < mapSize; iy += half) {
+        for (int ix = (iy + half) % size; ix < mapSize; ix += size) {
+            int count = 0;
+            float sum = 0;
+
+            //T
+            if (iy - half >= 0) {
+                sum += arr[iy - half][ix];
+                count++;
+            }
+            //L
+            if (ix - half >= 0) {
+                sum += arr[iy][ix - half];
+                count++;
+            }
+            //R
+            if (ix + half < mapSize) {
+                sum += arr[iy][ix + half];
+                count++;
+            }
+            //B
+            if (iy + half < mapSize) {
+                sum += arr[iy + half][ix];
+                count++;
+            }
+
+            float c = sum / count;
+            c += randF(-r, r);
+            updateMapMinMax(c);
+            arr[iy][ix] = c;
+        }
+    }
+}
+
+Image diamondSquare(float r) {
+    // reset globals
+    mapMin = std::numeric_limits<float>::max();
+    mapMax = std::numeric_limits<float>::lowest();
+
+    arrayT height_map = {};
+    fillArr(height_map, 0);
+
+    height_map[0][0]                       = randF(hMin, hMax);
+    height_map[0][mapSize - 1]             = randF(hMin, hMax);
+    height_map[mapSize - 1][0]             = randF(hMin, hMax);
+    height_map[mapSize - 1][mapSize - 1]   = randF(hMin, hMax);
+
+    int chunk_size = mapSize - 1;
+    while (chunk_size > 1) {
+        int half = chunk_size / 2;
+        square_step(height_map, chunk_size, half, r);
+        diamond_step(height_map, chunk_size, half, r);
+        chunk_size /= 2;
+        r /= 2;
+    }
+
+    // normalize into a flat float array then wrap in a Raylib Image
+    float* data = new float[mapSize * mapSize];
+    for (int y = 0; y < mapSize; ++y) {
+        for (int x = 0; x < mapSize; ++x) {
+            float v = (height_map[y][x] - mapMin) / (mapMax - mapMin);
+            data[y * mapSize + x] = std::clamp(v, 0.0f, 1.0f);
+        }
+    }
+
+    Image img;
+    img.data    = data;
+    img.width   = static_cast<int>(mapSize);
+    img.height  = static_cast<int>(mapSize);
+    img.mipmaps = 1;
+    img.format  = PIXELFORMAT_UNCOMPRESSED_R32;
+    return img;
 }

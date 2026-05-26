@@ -36,32 +36,10 @@ https://dsmte.github.io/Learn--cpp_programming/Subjects/IMAC2028/S2/sujet
 
 # L'échec de l'ajout du Diamond Square
 
-de base la noise stack c'était ça:
+L'échec (cuisant) de l'ajout du diamond Square est dispo dans ces fichiers :
 
-```cpp
-
-struct Noise {
-    std::function<float(glm::vec2 const&, int)> func;
-    int nbOctave {6};
-    float scale {5.f};
-};
-
-struct ImageGenerationData {
-    ...
-    static std::function<float(glm::vec2 const&, int)> noiseFunctions[2];
-};
-
-struct ImageGenerationParameters {
-    ...
-    std::vector<Noise> noiseStack {};
-};
-```
-
-J'ai voulu faire en sorte qu'il y ai 2 type de bruits :
-
-- Celui qui se base sur un algo et renvoie une valeur
-- Celui qui se base sur une matrice généré par un algo avant et renvoie une valeur
-
-Cependant pour maintenir la cohérence dans la struct `Noise` il fallait que le type de `func` dans la struct `Noise` soit une `std::variant` de plusieurs signatures de fonctions de bruit (celles qui génère une matrice OU revoie une valeur).
-
-Et après il fallait des conditions dans le code pour récupérer la valeur en faisant des comparaisons sur le type de Bruit (matrice ou fonction) et la manière de récupérer la valeur (sampleHeightmap OU noise.func)
+- [./src/app.hpp](./src/app.hpp)
+- [./src/app.cpp](./src/app.cpp)
+- [./src/noise.hpp](./src/noise.hpp)
+- [./src/noise.cpp](./src/noise.cpp)
+- [./src/generation.cpp](./src/generation.cpp)

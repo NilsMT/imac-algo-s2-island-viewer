@@ -6,23 +6,41 @@
 #include <vector>
 #include <string>
 #include <cmath>
+#include <variant>
 
+enum NoiseType {
+    FUNCTION,
+    MATRIX,
+};
+//noise function type
+using NoiseFunction = std::variant<
+    std::function<float(glm::vec2 const&, int)>, //PERLIN + SIMPLEX
+    std::function<Image(float)> //DS
+>;
+//noise struct
 struct Noise {
-    std::function<float(glm::vec2 const&, int)> func;
+    NoiseType type;
+    //https://www.reddit.com/r/cpp_questions/comments/1q6lkla/how_can_i_effectively_use_stdvariant_to_handle/?tl=fr
+    //+ https://en.cppreference.com/cpp/utility/variant/visit2
+    NoiseFunction func;
     int nbOctave {6};
     float scale {5.f};
 };
-
 struct ImageGenerationData {
         const char* colorMaps[5] = { 
             "resources/cm_island_16.png","resources/cm_moutain_16.png",
             "resources/cm_elevation_16.png","resources/cm_rainbow_16.png",
             "resources/cm_mesa_32.png" 
         };
-
-        static std::function<float(glm::vec2 const&, int)> noiseFunctions[2];
+        static std::variant<
+            std::function<float(glm::vec2 const&, int)>,
+            std::function<Image(float)>
+        > noiseFunctions[3];
+        const NoiseType noiseFunctionsTypes[2] = {
+            NoiseType::FUNCTION,
+            NoiseType::MATRIX
+        };
 };
-
 struct ImageGenerationParameters {
     int noiseSeed { 0 };
     bool isSeedRandom { true };
@@ -63,6 +81,7 @@ struct AppContext {
     Model model {};
 
     std::vector<glm::vec3> objectPositions {};
+    std::vector<Image> noiseMatrixStack {};
 
     // A simple cube mesh and material we use to draw objects on the terrain.
     Mesh cube {};
