@@ -6,7 +6,7 @@ std::vector<glm::vec2> generate2DPositions(PointsGenerationParameters const& par
 
 void generateObjectsPositions(AppContext& context);
 
-float sampleHeightmap(AppContext const& context, float u, float v);
+float sampleHeightmap(Image heightmapImage, float u, float v);
 
 void setupSeed(AppContext& context);
 

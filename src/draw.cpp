@@ -1,8 +1,7 @@
 #include "draw.hpp"
-
 #include "app.hpp"
-
 #include "generation.hpp"
+#include "utils/randFloat.hpp"
 
 #include "imgui.h"
 #include "raylib.h"
@@ -47,9 +46,6 @@ void drawCubes(AppContext const& context, Matrix const& terrainCentering)
         //randomization
         Vector3 scaleOff = {0,0,0};
         Vector3 rotOff = {0,0,0};
-
-        //https://stackoverflow.com/questions/4324763/can-we-have-functions-inside-functions-in-c
-        auto randF = []() { return (float)rand() / (float)RAND_MAX; };
 
         if (context.pointsGenerationParameters.isScaleRandom) {
             scaleOff = {
