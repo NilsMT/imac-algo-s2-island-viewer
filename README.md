@@ -72,8 +72,8 @@ struct ImageGenerationParameters {
 
 Le Diamond Square est un algorithme **matriciel** : il génère une heightmap entière (`Image`) d'un coup, plutôt que de renvoyer une valeur par position comme `Perlin` et `Simplex`. Il fallait donc supporter deux types de bruits dans la même stack :
 
-- **Fonction** : `float(glm::vec2, int)` — évalué point par point (Simplex, Perlin...)
-- **Matrice** : génère une image entière, qu'on sample ensuite — mais chaque algo matriciel peut avoir une signature différente
+- **Fonction** : `float(glm::vec2, int)`, point par point (Simplex, Perlin...)
+- **Matrice** : `Image( params de l'algo )`, qu'on sample ensuite (mais chaque algo matriciel peut avoir une signature entrante différente)
 
 ## Ce qu'on a fait
 
