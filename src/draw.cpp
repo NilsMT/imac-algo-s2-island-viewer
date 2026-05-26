@@ -31,8 +31,6 @@ void drawCubes(AppContext const& context, Matrix const& terrainCentering)
 
     float const cubeHalfHeight { 0.5f * context.cubeScale };
 
-    srand(context.imageGenerationParameters.noiseSeed);
-
     for (glm::vec3 const& pos : context.objectPositions) {
         //classic params
         Matrix const objectTranslation {

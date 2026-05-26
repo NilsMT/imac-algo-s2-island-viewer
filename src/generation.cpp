@@ -75,6 +75,8 @@ void setupSeed(AppContext& context) {
     if (context.imageGenerationParameters.isSeedRandom) {
         context.imageGenerationParameters.noiseSeed = rand();
     }
+
+    srand(context.imageGenerationParameters.noiseSeed);
 }
 
 void generateHeightmap(AppContext& context) {
