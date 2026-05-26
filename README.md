@@ -1,30 +1,38 @@
 https://dsmte.github.io/Learn--cpp_programming/Subjects/IMAC2028/S2/sujet
 
+- [Répartition des tâches](#répartition-des-tâches)
+- [Informations supplémentaires](#informations-supplémentaires)
+- [L'échec de l'ajout du Diamond Square](#léchec-de-lajout-du-diamond-square)
+    - [Avant](#avant)
+    - [Le problème](#le-problème)
+    - [Ce qu'on a fait](#ce-quon-a-fait)
+    - [Pourquoi c'est pas idéal](#pourquoi-cest-pas-idéal)
+
 # Répartition des tâches
 
 > 🚧 : En cours ✅ : Fini ❌ : À faire
 > ♒ : Amélioration supplémentaire ☑️ : Amélioration de l'énoncé
 
-| Fait | Catégorie       | Tâche                                                               | Note        | Qui      |
-| ---- | --------------- | ------------------------------------------------------------------- | ----------- | -------- |
-| ✅   | -               | Bruit fractal (FBM)                                                 |             | Matthieu |
-| 🚧   | -               | Générer heightmap + couleur                                         | TODO: mask  | Nils     |
-| ❌   | -               | Poisson disk sampling (2D) + placement en 3D                        |             | Matthieu |
-| ✅   | 🖥️ IHM          | Regénérer la heightmap                                              |             | Nils     |
-| ✅   | 🖥️ IHM          | Regénérer le mesh 3D                                                |             | Nils     |
-| ❌   | 🖥️ IHM          | Regénérer le poisson disk sampling                                  |             | -        |
-| ✅   | 🖥️ IHM          | Paramètres (seed, size, height range)                               |             | Nils     |
-| ❌   | ✨ Amélioration | Colormap builder                                                    |             | -        |
-| ❌   | ✨ Amélioration | Coloration avancé (ex: en fonction de la pente, type de biome, etc) |             | -        |
-| 🚧   | ✨ Amélioration | Algorithmes différents bruit (Simplex, Worley, etc)                 | fix simplex | -        |
-| ✅   | ✨ Amélioration | Pile d'Algorithmes de bruit                                         | fix simplex | -        |
-| ✅   | ✨ Amélioration | Variation placement d'objet (taille, rotation)                      |             | -        |
-| ✅   | ✨ Amélioration | Placement d'objet avec des conditions (pentes, hauteur)             |             | -        |
-| ❌   | ✨ Amélioration | Importer un modèles 3D (libre de droits)à la place du cube          |             | -        |
-| ❌   | ✨ Amélioration | Liste de modèles 3D (libre de droits) à placer avec conditions      |             | -        |
-| ❌   | ✨ Amélioration | Biomes (colormap, liste d'objets, influence sur la hauteur, bruit)  |             | -        |
-| ❌   | ✨ Amélioration | Connecter les îles avec des ponts, ou par la terre                  |             | -        |
-| ❌   | ✨ Amélioration | Génération de différentes formes d'îles (au moins 3)                |             | -        |
+| Fait | Catégorie | En + | Tâche                                                               | Note        | Qui      |
+| ---- | --------- | ---- | ------------------------------------------------------------------- | ----------- | -------- |
+| ✅   | -         |      | Bruit fractal (FBM)                                                 |             | Matthieu |
+| 🚧   | -         |      | Générer heightmap + couleur                                         | TODO: mask  | Nils     |
+| ❌   | -         |      | Poisson disk sampling (2D) + placement en 3D                        |             | Matthieu |
+| ✅   | 🖥️ IHM    |      | Regénérer la heightmap                                              |             | Nils     |
+| ✅   | 🖥️ IHM    |      | Regénérer le mesh 3D                                                |             | Nils     |
+| ❌   | 🖥️ IHM    |      | Regénérer le poisson disk sampling                                  |             | -        |
+| ✅   | 🖥️ IHM    |      | Paramètres (seed, size, height range)                               |             | Nils     |
+| ❌   | -         | ☑️   | Colormap builder                                                    |             | -        |
+| ❌   | -         | ☑️   | Coloration avancé (ex: en fonction de la pente, type de biome, etc) |             | -        |
+| 🚧   | -         | ☑️   | Algorithmes différents bruit (Simplex, Worley, etc)                 | fix simplex | -        |
+| ✅   | -         | ☑️   | Pile d'Algorithmes de bruit                                         | fix simplex | -        |
+| ✅   | -         | ☑️   | Variation placement d'objet (taille, rotation)                      |             | -        |
+| ✅   | -         | ☑️   | Placement d'objet avec des conditions (pentes, hauteur)             |             | -        |
+| ❌   | -         | ☑️   | Importer un modèles 3D (libre de droits)à la place du cube          |             | -        |
+| ❌   | -         | ☑️   | Liste de modèles 3D (libre de droits) à placer avec conditions      |             | -        |
+| ❌   | -         | ☑️   | Biomes (colormap, liste d'objets, influence sur la hauteur, bruit)  |             | -        |
+| ❌   | -         | ☑️   | Connecter les îles avec des ponts, ou par la terre                  |             | -        |
+| ❌   | -         | ☑️   | Génération de différentes formes d'îles (au moins 3)                |             | -        |
 
 # Informations supplémentaires
 
@@ -36,10 +44,13 @@ https://dsmte.github.io/Learn--cpp_programming/Subjects/IMAC2028/S2/sujet
 
 # L'échec de l'ajout du Diamond Square
 
-de base la noise stack c'était ça:
+Le code de l'échec est dans la branche [diamond-square-attempt](https://github.com/NilsMT/imac-algo-s2-island-viewer/tree/diamond-square-attempt)
+
+## Avant
+
+La noise stack était simple : chaque bruit est une fonction qui prend une position et un seed, et renvoie un float.
 
 ```cpp
-
 struct Noise {
     std::function<float(glm::vec2 const&, int)> func;
     int nbOctave {6};
@@ -57,11 +68,63 @@ struct ImageGenerationParameters {
 };
 ```
 
-J'ai voulu faire en sorte qu'il y ai 2 type de bruits :
+## Le problème
 
-- Celui qui se base sur un algo et renvoie une valeur
-- Celui qui se base sur une matrice généré par un algo avant et renvoie une valeur
+Le Diamond Square est un algorithme **matriciel** — il génère une heightmap entière d'un coup, plutôt que de renvoyer une valeur par position comme `Perlin` et `Simplex`. Il fallait donc supporter deux types de bruits dans la même stack :
 
-Cependant pour maintenir la cohérence dans la struct `Noise` il fallait que le type de `func` dans la struct `Noise` soit une `std::variant` de plusieurs signatures de fonctions de bruit (celles qui génère une matrice OU revoie une valeur).
+- **Fonction** : `float(glm::vec2, int)` — évalué point par point (Simplex, Perlin...)
+- **Matrice** : génère une image entière, qu'on sample ensuite — mais chaque algo matriciel peut avoir une signature différente
 
-Et après il fallait des conditions dans le code pour récupérer la valeur en faisant des comparaisons sur le type de Bruit (matrice ou fonction) et la manière de récupérer la valeur (sampleHeightmap OU noise.func)
+## Ce qu'on a fait
+
+Pour garder une struct `Noise` unique, on a utilisé un `std::variant` pour le champ `func`, avec une enum `NoiseType` pour savoir lequel des deux types est actif.
+
+```cpp
+enum NoiseType {
+    FUNCTION,
+    MATRIX,
+};
+
+using NoiseFunction = std::variant
+    std::function<float(glm::vec2 const&, int)>, // PERLIN + SIMPLEX
+    std::function<Image(float)>                  // DS — et seulement DS
+    //les autres algo matrice de type Image( leurs paramètres )
+>;
+
+struct Noise {
+    NoiseType type;
+    NoiseFunction func;
+    int nbOctave {6};
+    float scale {5.f};
+};
+
+struct ImageGenerationData {
+    ...
+    static std::variant
+        std::function<float(glm::vec2 const&, int)>,
+        std::function<Image(float)>
+    > noiseFunctions[3];
+    const NoiseType noiseFunctionsTypes[2] = {
+        NoiseType::FUNCTION,
+        NoiseType::MATRIX
+    };
+};
+
+struct ImageGenerationParameters {
+    ...
+    std::vector<Noise> noiseStack {};
+};
+
+struct App {
+    ...
+    std::vector<Image> noiseMatrixStack {}; // résultats des algos matriciels
+    ...
+};
+```
+
+## Pourquoi c'est pas idéal
+
+- Le variant ne peut pas couvrir toutes les signatures possibles des algos matriciels — il faudrait ajouter à la main chaque nouvelle signature dans `NoiseFunction`
+- Il faut jongler avec `std::get` / `std::get_if` partout où on utilise un bruit
+- L'interface ImGui doit s'adapter manuellement à chaque type de bruit
+- Une `noiseMatrixStack` séparée dans `AppContext` stocke les résultats des algos matriciels, ce qui crée une désynchronisation potentielle avec la `noiseStack`
