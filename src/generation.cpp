@@ -113,10 +113,10 @@ void generateHeightmap(AppContext& context) {
                 glm::vec2 position = p * noise.scale;
                 acc += octaveNoise(
                     noise.nbOctave, position, context.imageGenerationParameters.noiseSeed, noise.func
-                ) * 0.5f + 0.5f; //noises are all [-1;1] ? if [0;1] *2 -1
+                );
             }
 
-            //TODO: matrix sample + add the *0.5 + 0.5 as part of function
+            //TODO: matrix sample
 
             //div
             acc /= static_cast<float>(context.imageGenerationParameters.noiseStack.size());

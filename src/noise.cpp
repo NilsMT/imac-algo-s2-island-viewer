@@ -40,7 +40,7 @@ glm::vec2 seedToOffset2D(int seed)
 } // namespace
 
 float perlinNoise(glm::vec2 const& position) {
-    return glm::perlin(position);
+    return glm::perlin(position) * 0.5f + 0.5f;;
 }
 
 //perlin
@@ -87,10 +87,10 @@ float octaveNoise(int nbOctave, glm::vec2 const& position, int seed, std::functi
 
 //simplex from https://www.researchgate.net/publication/216813608_Simplex_noise_demystified
 
-static const glm::vec2 grad3[12] = {
+static const glm::vec2 grad2[12] = {
     {1, 1}, {-1, 1}, {1, -1}, {-1, -1},
-    {1, 0}, {-1, 0}, {0, 1}, {0, -1},
-    {0, 0}, {1, 0}, {-1, 0}, {0, 1}
+    {1, 0}, {-1, 0}, {1, 0},  {-1, 0},
+    {0, 1}, {0, -1}, {0, 1},  {0, -1}
 };
 
 static const int p[256] = {
@@ -118,55 +118,43 @@ float dot(const glm::vec2& g, float x, float y) {
 }
 
 float simplexNoise(glm::vec2 const& position) {
-    const float F2 = 0.5 * (sqrt(3.0) - 1.0);
-    const float G2 = (3.0 - sqrt(3.0)) / 6.0;
+    const float F2 = 0.5f * (sqrtf(3.0f) - 1.0f);
+    const float G2 = (3.0f - sqrtf(3.0f)) / 6.0f;
 
     float s = (position.x + position.y) * F2;
-    int i = floor(position.x + s);
-    int j = floor(position.y + s);
+    int i = (int)floorf(position.x + s);
+    int j = (int)floorf(position.y + s);
 
     float t = (i + j) * G2;
-    float x0 = i - t;
-    float y0 = j - t;
+    float x1 = position.x - (i - t);
+    float y1 = position.y - (j - t);
 
-    float x1 = position.x - x0;
-    float y1 = position.y - y0;
-
-    int i1, j1;
-    if (x1 > y1) { i1 = 1; j1 = 0; }
-    else { i1 = 0; j1 = 1; }
+    int i1 = (x1 > y1) ? 1 : 0;
+    int j1 = (x1 > y1) ? 0 : 1;
 
     float x2 = x1 - i1 + G2;
     float y2 = y1 - j1 + G2;
-    float x3 = x1 - 1.0 + 2.0 * G2;
-    float y3 = y1 - 1.0 + 2.0 * G2;
+    float x3 = x1 - 1.0f + 2.0f * G2;
+    float y3 = y1 - 1.0f + 2.0f * G2;
 
     int ii = i & 255;
     int jj = j & 255;
-    int gi0 = perm[ii + perm[jj]] % 12;
+    int gi0 = perm[ii +     perm[jj    ]] % 12;
     int gi1 = perm[ii + i1 + perm[jj + j1]] % 12;
-    int gi2 = perm[ii + 1 + perm[jj + 1]] % 12;
+    int gi2 = perm[ii + 1  + perm[jj + 1 ]] % 12;
 
-    float n0 = 0.0, n1 = 0.0, n2 = 0.0;
-    float t0 = 0.5 - x1*x1 - y1*y1;
-    if (t0 >= 0) {
-        t0 *= t0;
-        n0 = t0 * t0 * dot(grad3[gi0], x1, y1);
-    }
+    float n0 = 0.0f, n1 = 0.0f, n2 = 0.0f;
 
-    float t1 = 0.5 - x2*x2 - y2*y2;
-    if (t1 >= 0) {
-        t1 *= t1;
-        n1 = t1 * t1 * dot(grad3[gi1], x2, y2);
-    }
+    float t0 = 0.5f - x1*x1 - y1*y1;
+    if (t0 >= 0.0f) { t0 *= t0; n0 = t0 * t0 * dot(grad2[gi0], x1, y1); }
 
-    float t2 = 0.5 - x3*x3 - y3*y3;
-    if (t2 >= 0) {
-        t2 *= t2;
-        n2 = t2 * t2 * dot(grad3[gi2], x3, y3);
-    }
+    float t1 = 0.5f - x2*x2 - y2*y2;
+    if (t1 >= 0.0f) { t1 *= t1; n1 = t1 * t1 * dot(grad2[gi1], x2, y2); }
 
-    return 70.0 * (n0 + n1 + n2);
+    float t2 = 0.5f - x3*x3 - y3*y3;
+    if (t2 >= 0.0f) { t2 *= t2; n2 = t2 * t2 * dot(grad2[gi2], x3, y3); }
+
+    return (70.0f * (n0 + n1 + n2)) * 0.5f + 0.5f;
 }
 
 float simplexNoiseSeeded(glm::vec2 const& position, int seed) {
