@@ -122,10 +122,9 @@ void drawImGui(AppContext& context) {
                 Noise& noise = context.imageGenerationParameters.noiseStack[i];
                 ImGui::PushID(i);
 
-                int selectedNoise = (noise.type == context.imageGenerationData.noiseFunctionsTypes[0]) ? 0 : 1;
+                int selectedNoise = 0;
                 if (ImGui::Combo("Noise", &selectedNoise, "Perlin\0Simplex\0")) {
                     noise.func = context.imageGenerationData.noiseFunctions[selectedNoise];
-                    noise.type = context.imageGenerationData.noiseFunctionsTypes[selectedNoise];
                 }
                 ImGui::SliderInt("Number of octaves", &noise.nbOctave, 0, 16);
                 ImGui::SliderFloat("Scale", &noise.scale, 0.01f, 10.f);
