@@ -118,7 +118,7 @@ void drawImGui(AppContext& context) {
         if (ImGui::CollapsingHeader("Noises", ImGuiTreeNodeFlags_DefaultOpen)) {
             ImGui::Indent();
 
-            for (int i = 0; i < context.imageGenerationParameters.noiseStack.size(); i++) {
+            for (size_t i = 0; i < context.imageGenerationParameters.noiseStack.size(); i++) {
                 Noise& noise = context.imageGenerationParameters.noiseStack[i];
                 ImGui::PushID(i);
 
