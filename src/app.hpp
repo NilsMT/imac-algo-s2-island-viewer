@@ -7,13 +7,7 @@
 #include <string>
 #include <cmath>
 
-enum NoiseType {
-    FUNCTION,
-    MATRIX,
-};
-
 struct Noise {
-    NoiseType type { NoiseType::FUNCTION };
     std::function<float(glm::vec2 const&, int)> func;
     int nbOctave {6};
     float scale {5.f};
@@ -27,11 +21,6 @@ struct ImageGenerationData {
         };
 
         static std::function<float(glm::vec2 const&, int)> noiseFunctions[2];
-
-        const NoiseType noiseFunctionsTypes[2] = {
-            NoiseType::FUNCTION,
-            NoiseType::MATRIX
-        };
 };
 
 struct ImageGenerationParameters {
