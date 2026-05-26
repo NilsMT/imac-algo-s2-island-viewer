@@ -143,8 +143,11 @@ void drawImGui(AppContext& context) {
                 ImGui::PopID();
             }
 
-            if (ImGui::Button("Add Noise"))
-                context.imageGenerationParameters.noiseStack.push_back(Noise{});
+            if (ImGui::Button("Add Noise")) {
+                Noise newNoise{};
+                newNoise.func = context.imageGenerationData.noiseFunctions[0]; // default to perlin
+                context.imageGenerationParameters.noiseStack.push_back(newNoise);
+            }
 
             ImGui::Unindent();
         }
