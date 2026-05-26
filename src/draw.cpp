@@ -47,6 +47,8 @@ void drawCubes(AppContext const& context, Matrix const& terrainCentering)
         //randomization
         Vector3 scaleOff = {0,0,0};
         Vector3 rotOff = {0,0,0};
+
+        //https://stackoverflow.com/questions/4324763/can-we-have-functions-inside-functions-in-c
         auto randF = []() { return (float)rand() / (float)RAND_MAX; };
 
         if (context.pointsGenerationParameters.isScaleRandom) {
@@ -88,7 +90,7 @@ void drawImGui(AppContext& context) {
         //image resolution
         ImGui::SliderInt("Resolution",&context.imageGenerationParameters.resolution,16,1024);
 
-        if (ImGui::CollapsingHeader("Seed", ImGuiTreeNodeFlags_DefaultOpen)) {
+        if (ImGui::CollapsingHeader("Seeding", ImGuiTreeNodeFlags_DefaultOpen)) {
             ImGui::Indent();
 
             //checkbox for random seed
@@ -182,7 +184,7 @@ void drawImGui(AppContext& context) {
 
             //params for random object scale
             //https://github.com/ocornut/imgui/issues/779
-            if (context.pointsGenerationParameters.isRotationRandom) {
+            if (context.pointsGenerationParameters.isScaleRandom) {
                 ImGui::SliderFloat3("Scale Offset", (float*)&context.pointsGenerationParameters.scaleOffset, 0.0f, 10.0f);
             }
 

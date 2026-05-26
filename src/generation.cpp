@@ -27,27 +27,19 @@ std::vector<glm::vec2> generate2DPositions([[maybe_unused]] PointsGenerationPara
 }
 
 void generateObjectsPositions(AppContext& context) {
-    std::vector<glm::vec2> const positions {generate2DPositions(context.pointsGenerationParameters)};
+    std::vector<glm::vec2> const positions{generate2DPositions(context.pointsGenerationParameters)};
 
     context.objectPositions.clear();
     context.objectPositions.reserve(positions.size());
-    for (glm::vec2 const& p : positions)
-    {
+
+    for (glm::vec2 const& p : positions) {
         float z = sampleHeightmap(context.heightmapImage, p.x, p.y);
 
-        if (
-            context.pointsGenerationParameters.heightTreshold[0] < z &&
-            z < context.pointsGenerationParameters.heightTreshold[1]
-        ) {
-            context.objectPositions.emplace_back(
-                p.x, // x
-                p.y, // y
-                z
-            );
+        if (context.pointsGenerationParameters.heightTreshold[0] <= z &&
+            z <= context.pointsGenerationParameters.heightTreshold[1]) {
+            context.objectPositions.emplace_back(p.x, p.y, z);
         }
     }
-    // TODO(student): extension - filter positions by sampled height range.
-    //TODO: position management here
 }
 
 float sampleHeightmap(Image heightmapImage, float u, float v)
