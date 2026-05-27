@@ -86,19 +86,19 @@ static void Spacing(int n = 1) {
 
 void drawImGui(AppContext& context) {
     // Tab bar - replaces the three top-level CollapsingHeaders
-    if (ImGui::BeginTabBar("MainTabs")) {
+    if (ImGui::BeginMainMenuBar()) {
 
         //----------------------------------------------
-        // TAB 1 - HEIGHT MAP  (blue accent)
+        // HEIGHT MAP  (blue accent)
         //----------------------------------------------
-        ImGui::PushStyleColor(ImGuiCol_Tab,             ImVec4(0.15f, 0.30f, 0.55f, 1.f));
-        ImGui::PushStyleColor(ImGuiCol_TabHovered,      ImVec4(0.25f, 0.45f, 0.80f, 1.f));
-        ImGui::PushStyleColor(ImGuiCol_TabActive,       ImVec4(0.20f, 0.40f, 0.75f, 1.f));
-        ImGui::PushStyleColor(ImGuiCol_Header,          ImVec4(0.20f, 0.40f, 0.75f, 0.35f));
-        ImGui::PushStyleColor(ImGuiCol_SliderGrab,      ImVec4(0.30f, 0.55f, 0.95f, 1.f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgActive,   ImVec4(0.20f, 0.40f, 0.75f, 0.50f));
+        ImGui::PushStyleColor(ImGuiCol_MenuBarBg, ImVec4(0.15f, 0.30f, 0.55f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.25f, 0.45f, 0.80f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.20f, 0.40f, 0.75f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.20f, 0.40f, 0.75f, 0.35f));
+        ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(0.30f, 0.55f, 0.95f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.20f, 0.40f, 0.75f, 0.50f));
 
-        if (ImGui::BeginTabItem("Height Map")) {
+        if (ImGui::BeginMenu("Height Map")) {
             Spacing(2);
 
             ImGui::SliderInt("Resolution", &context.imageGenerationParameters.resolution, 16, 1024);
@@ -107,16 +107,36 @@ void drawImGui(AppContext& context) {
             Spacing(2);
             ImGui::SeparatorText("Seeding");
             Spacing(1);
-
+            
             ImGui::Checkbox("Random Seed", &context.imageGenerationParameters.isSeedRandom);
-            if (!context.imageGenerationParameters.isSeedRandom) {
-                ImGui::InputInt("Seed", &context.imageGenerationParameters.noiseSeed);
-            }
+            ImGui::BeginDisabled(context.imageGenerationParameters.isSeedRandom);
+            ImGui::InputInt("Seed", &context.imageGenerationParameters.noiseSeed);
+            ImGui::EndDisabled();
 
-            //-Color Map ----------------------------------------------
+            //-Mask ----------------------------------------------
             Spacing(2);
-            ImGui::SeparatorText("Color Map");
+            ImGui::SeparatorText("Mask");
             Spacing(1);
+
+            ImGui::Combo("Type",    &context.imageGenerationParameters.mask.type, context.imageGenerationData.noiseListStr);
+
+            Spacing(2);
+            ImGui::EndMenu();
+        }
+        ImGui::PopStyleColor(6);
+
+        //----------------------------------------------
+        // COLOR MAP  (pink accent)
+        //----------------------------------------------
+        ImGui::PushStyleColor(ImGuiCol_MenuBarBg, ImVec4(0.25f, 0.30f, 0.55f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.95f, 0.45f, 0.80f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.90f, 0.40f, 0.75f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.90f, 0.40f, 0.75f, 0.35f));
+        ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(1.0f, 0.55f, 0.95f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.90f, 0.40f, 0.75f, 0.50f));
+
+        if (ImGui::BeginMenu("Color Map")) {
+            Spacing(2);
 
             ImGui::Combo(
                 "Color Map",
@@ -126,16 +146,29 @@ void drawImGui(AppContext& context) {
             );
             ImGui::Checkbox("Lerp", &context.imageGenerationParameters.colorMapLerp);
 
-            //-Noise ----------------------------------------------
             Spacing(2);
-            ImGui::SeparatorText("Noise");
-            Spacing(1);
+            ImGui::EndMenu();
+        }
+        ImGui::PopStyleColor(6);
+
+        //----------------------------------------------
+        // NOISE  (red accent)
+        //----------------------------------------------
+        ImGui::PushStyleColor(ImGuiCol_MenuBarBg, ImVec4(0.25f, 0.0f, 0.0f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.95f, 0.0f, 0.0f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.90f, 0.0f, 0.0f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.90f, 0.0f, 0.75f, 0.0f));
+        ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(1.0f, 0.0f, 0.0f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.90f, 0.0f, 0.0f, 0.50f));
+
+        if (ImGui::BeginMenu("Noise")) {
+            Spacing(2);
 
             ImGui::SliderFloat("Gaussian Sigma", &context.imageGenerationData.sigma, 0.01f, 1.f);
 
             // Noise stack
             Spacing(2);
-            ImGui::TextDisabled("Noise Stack");
+            ImGui::SeparatorText("Noise Stack");
             Spacing(1);
 
             for (size_t i = 0; i < context.imageGenerationParameters.noiseStack.size(); i++) {
@@ -147,7 +180,7 @@ void drawImGui(AppContext& context) {
 
                 char label[32];
                 snprintf(label, sizeof(label), "Layer %zu", i + 1);
-                ImGui::TextDisabled("%s", label);
+                ImGui::Text("%s", label);
 
                 ImGui::Combo("Type",    &noise.type, context.imageGenerationData.noiseListStr);
                 ImGui::SliderInt("Octaves", &noise.nbOctave, 1, 8);
@@ -168,30 +201,23 @@ void drawImGui(AppContext& context) {
                 newNoise.type = NoiseType::PERLIN;
                 context.imageGenerationParameters.noiseStack.push_back(newNoise);
             }
-
-            //-Mask ----------------------------------------------
+            
             Spacing(2);
-            ImGui::SeparatorText("Mask");
-            Spacing(1);
-
-            ImGui::Combo("Type",    &context.imageGenerationParameters.mask.type, context.imageGenerationData.noiseListStr);
-
-            Spacing(2);
-            ImGui::EndTabItem();
+            ImGui::EndMenu();
         }
         ImGui::PopStyleColor(6);
 
         //----------------------------------------------
-        // TAB 2 - OBJECTS  (green accent)
+        // OBJECTS  (green accent)
         //----------------------------------------------
-        ImGui::PushStyleColor(ImGuiCol_Tab,             ImVec4(0.10f, 0.40f, 0.20f, 1.f));
-        ImGui::PushStyleColor(ImGuiCol_TabHovered,      ImVec4(0.18f, 0.60f, 0.32f, 1.f));
-        ImGui::PushStyleColor(ImGuiCol_TabActive,       ImVec4(0.14f, 0.52f, 0.26f, 1.f));
-        ImGui::PushStyleColor(ImGuiCol_Header,          ImVec4(0.14f, 0.52f, 0.26f, 0.35f));
-        ImGui::PushStyleColor(ImGuiCol_SliderGrab,      ImVec4(0.22f, 0.75f, 0.40f, 1.f));
-        ImGui::PushStyleColor(ImGuiCol_FrameBgActive,   ImVec4(0.14f, 0.52f, 0.26f, 0.50f));
+        ImGui::PushStyleColor(ImGuiCol_MenuBarBg, ImVec4(0.10f, 0.40f, 0.20f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.18f, 0.60f, 0.32f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.14f, 0.52f, 0.26f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.14f, 0.52f, 0.26f, 0.35f));
+        ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(0.22f, 0.75f, 0.40f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.14f, 0.52f, 0.26f, 0.50f));
 
-        if (ImGui::BeginTabItem("Objects")) {
+        if (ImGui::BeginMenu("Objects")) {
             Spacing(2);
 
             ImGui::SliderFloat("Cube Scale", &context.cubeScale, 0.01f, 1.0f);
@@ -222,21 +248,21 @@ void drawImGui(AppContext& context) {
             }
 
             Spacing(2);
-            ImGui::EndTabItem();
+            ImGui::EndMenu();
         }
         ImGui::PopStyleColor(6);
 
         //----------------------------------------------
-        // TAB 3 - ACTIONS  (orange accent)
+        // ACTIONS  (orange accent)
         //----------------------------------------------
-        ImGui::PushStyleColor(ImGuiCol_Tab,             ImVec4(0.55f, 0.30f, 0.05f, 1.f));
-        ImGui::PushStyleColor(ImGuiCol_TabHovered,      ImVec4(0.80f, 0.48f, 0.10f, 1.f));
-        ImGui::PushStyleColor(ImGuiCol_TabActive,       ImVec4(0.70f, 0.40f, 0.08f, 1.f));
-        ImGui::PushStyleColor(ImGuiCol_Button,          ImVec4(0.55f, 0.28f, 0.05f, 1.f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered,   ImVec4(0.75f, 0.42f, 0.10f, 1.f));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive,    ImVec4(0.90f, 0.55f, 0.15f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_MenuBarBg, ImVec4(0.55f, 0.30f, 0.05f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.80f, 0.48f, 0.10f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.70f, 0.40f, 0.08f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_Button,  ImVec4(0.55f, 0.28f, 0.05f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.75f, 0.42f, 0.10f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.90f, 0.55f, 0.15f, 1.f));
 
-        if (ImGui::BeginTabItem("Actions")) {
+        if (ImGui::BeginMenu("Actions")) {
             Spacing(2);
 
             float btnWidth = ImGui::GetContentRegionAvail().x;
@@ -265,7 +291,7 @@ void drawImGui(AppContext& context) {
             //regen all bigger
             ImGui::PushStyleColor(ImGuiCol_Button,        ImVec4(0.70f, 0.38f, 0.05f, 1.f));
             ImGui::PushStyleColor(ImGuiCol_ButtonHovered,  ImVec4(0.90f, 0.52f, 0.12f, 1.f));
-            if (ImGui::Button("Regenerate All",            ImVec2(btnWidth, 36.f))) {
+            if (ImGui::Button("Regenerate All", ImVec2(btnWidth, 36.f))) {
                 setupSeed(context);
                 generateHeightmap(context);
                 regenerateMeshFromImage(context);
@@ -274,11 +300,11 @@ void drawImGui(AppContext& context) {
             ImGui::PopStyleColor(2);
 
             Spacing(2);
-            ImGui::EndTabItem();
+            ImGui::EndMenu();
         }
         ImGui::PopStyleColor(6);
 
-        ImGui::EndTabBar();
+        ImGui::EndMainMenuBar();
     }
 }
 
@@ -305,6 +331,6 @@ void drawRaylibUI(AppContext& context) {
         DrawCircleV({ px, py }, 2.0f, RED);
     }
 
-    DrawFPS(10, 10);
+    DrawFPS(10, 20);
 }
 
