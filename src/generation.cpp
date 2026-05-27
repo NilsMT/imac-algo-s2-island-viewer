@@ -125,7 +125,8 @@ void generateHeightmap(AppContext& context) {
     //generate the mask
     context.maskImage = GenImageFromNoiseFunction<float>(resolution, resolution, PIXELFORMAT_UNCOMPRESSED_R32,
         [&](glm::vec2 const& p)->float {
-            return 1; //TODO: choose mask
+            NoiseFunction func = context.imageGenerationData.noiseFunctions[context.imageGenerationParameters.mask.type];
+            return func(p,context);
         }
     );
 

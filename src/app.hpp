@@ -15,6 +15,7 @@ enum NoiseType {
     GAUSSIAN,
 };
 
+//NOTE: change to list of noises
 static const char listStr[] = "None\0Perlin\0Simplex\0Gaussian\0";
 
 //forward declaration for noisefunction type

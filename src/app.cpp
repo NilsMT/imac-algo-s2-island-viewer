@@ -2,6 +2,7 @@
 #include "raymath.h"
 #include "utils/raylibUtils.hpp"
 
+//NOTE: change function list here
 NoiseFunction ImageGenerationData::noiseFunctions[4] = {
     noneNoise,
     perlinNoiseSeeded,
