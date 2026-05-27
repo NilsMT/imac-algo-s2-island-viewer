@@ -94,7 +94,7 @@ using NoiseFunction = std::variant
 struct Noise {
     NoiseType type;
     NoiseFunction func;
-    int nbOctave {6};
+    int nbOctave {2};
     float scale {5.f};
 };
 

@@ -7,6 +7,9 @@
 
 float perlinNoise(glm::vec2 const& position);
 float perlinNoiseSeeded(glm::vec2 const& position, int seed);
+
+void initPerm();
 float simplexNoise(glm::vec2 const& position);
 float simplexNoiseSeeded(glm::vec2 const& position, int seed);
+
 float octaveNoise(int nbOctave,glm::vec2 const& position, int seed, std::function<float(glm::vec2 const&, int)> noiseFunction);
