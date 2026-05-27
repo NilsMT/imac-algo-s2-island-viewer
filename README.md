@@ -24,7 +24,7 @@ https://dsmte.github.io/Learn--cpp_programming/Subjects/IMAC2028/S2/sujet
 | ✅   | 🖥️ IHM    |      | Paramètres (seed, size, height range)                               |            | Nils     |
 | ❌   | -         | ☑️   | Colormap builder                                                    |            | -        |
 | ❌   | -         | ☑️   | Coloration avancé (ex: en fonction de la pente, type de biome, etc) |            | -        |
-| 🚧   | -         | ☑️   | Algorithmes différents bruit (Simplex, Worley, etc)                 | add DS     | -        |
+| ✅   | -         | ☑️   | Algorithmes différents bruit (Simplex, Worley, etc)                 |            | -        |
 | ✅   | -         | ☑️   | Pile d'Algorithmes de bruit                                         |            | -        |
 | ✅   | -         | ☑️   | Variation placement d'objet (taille, rotation)                      |            | -        |
 | ✅   | -         | ☑️   | Placement d'objet avec des conditions (pentes, hauteur)             |            | -        |
