@@ -117,39 +117,59 @@ void drawImGui(AppContext& context) {
 
         if (ImGui::CollapsingHeader("Noises", ImGuiTreeNodeFlags_DefaultOpen)) {
             ImGui::Indent();
-
-            for (size_t i = 0; i < context.imageGenerationParameters.noiseStack.size(); i++) {
-                Noise& noise = context.imageGenerationParameters.noiseStack[i];
-                ImGui::PushID(i);
-
-                //noise dropdown
-                if (ImGui::Combo("Noise", &noise.type, "Perlin\0Simplex\0")) {
-                    noise.func = context.imageGenerationData.noiseFunctions[noise.type];
-                }
                 
-                //octaves
-                ImGui::SliderInt("Number of octaves", &noise.nbOctave, 1, 8);
+            if (ImGui::CollapsingHeader("Noise stack", ImGuiTreeNodeFlags_DefaultOpen)) {
+                ImGui::Indent();
+            
+                for (size_t i = 0; i < context.imageGenerationParameters.noiseStack.size(); i++) {
+                    Noise& noise = context.imageGenerationParameters.noiseStack[i];
+                    ImGui::PushID(i);
 
-                //scale
-                ImGui::SliderFloat("Scale", &noise.scale, 0.01f, 10.f);
+                    //noise dropdown
+                    ImGui::Combo("Noise", &noise.type, context.imageGenerationData.noiseListStr);
+                    
+                    //octaves
+                    ImGui::SliderInt("Octaves", &noise.nbOctave, 1, 8);
 
-                //remove noise
-                if (ImGui::Button("Remove Noise"))
-                    context.imageGenerationParameters.noiseStack.erase(
-                        context.imageGenerationParameters.noiseStack.begin() + i--);
+                    //scale
+                    ImGui::SliderFloat("Scale", &noise.scale, 0.01f, 10.f);
+
+                    //remove noise
+                    if (ImGui::Button("Remove Noise"))
+                        context.imageGenerationParameters.noiseStack.erase(
+                            context.imageGenerationParameters.noiseStack.begin() + i--);
 
 
-                ImGui::Separator();
+                    ImGui::Separator();
 
 
-                ImGui::PopID();
+                    ImGui::PopID();
+                }
+
+                //add noise
+                if (ImGui::Button("Add Noise")) {
+                    Noise newNoise{};
+                    newNoise.type = NoiseType::PERLIN; // default to perlin
+                    context.imageGenerationParameters.noiseStack.push_back(newNoise);
+                }
+
+                ImGui::Unindent();
             }
 
-            //add noise
-            if (ImGui::Button("Add Noise")) {
-                Noise newNoise{};
-                newNoise.func = context.imageGenerationData.noiseFunctions[0]; // default to perlin
-                context.imageGenerationParameters.noiseStack.push_back(newNoise);
+
+            if (ImGui::CollapsingHeader("Mask", ImGuiTreeNodeFlags_DefaultOpen)) {
+                ImGui::Indent();
+
+                //noise dropdown
+                ImGui::Combo("Noise", &context.imageGenerationParameters.mask.type, context.imageGenerationData.noiseListStr);
+                
+                //octaves
+                ImGui::SliderInt("Octaves", &context.imageGenerationParameters.mask.nbOctave, 1, 8);
+
+                //scale
+                ImGui::SliderFloat("Scale", &context.imageGenerationParameters.mask.scale, 0.01f, 10.f);
+
+                ImGui::Unindent();
             }
 
             ImGui::Unindent();

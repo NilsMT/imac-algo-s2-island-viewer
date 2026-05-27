@@ -51,6 +51,14 @@ int main() {
 
     initPerm();
     setupSeed(context);
+    context.imageGenerationParameters.noiseStack.push_back(
+        Noise {
+            1,
+            5.0f,
+            NoiseType::PERLIN
+        }
+    );
+
     generateHeightmap(context);
     regenerateMeshFromImage(context);
     generateObjectsPositions(context);

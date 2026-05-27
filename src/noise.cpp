@@ -1,5 +1,6 @@
 
 #include "noise.hpp"
+#include "app.hpp"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/noise.hpp>
@@ -43,14 +44,14 @@ float perlinNoise(glm::vec2 const& position) {
 
 //perlin
 
-float perlinNoiseSeeded(glm::vec2 const& position, int seed) {
+float perlinNoiseSeeded(glm::vec2 const& position, AppContext const& context) {
     // Cache computed offset because the same seed is used for many samples per frame.
     static int cachedSeed {};
     static glm::vec2 cachedOffset {};
 
-    if (seed != cachedSeed) {
-        cachedSeed = seed;
-        cachedOffset = seedToOffset2D(seed);
+    if (context.imageGenerationParameters.noiseSeed != cachedSeed) {
+        cachedSeed = context.imageGenerationParameters.noiseSeed;
+        cachedOffset = seedToOffset2D(cachedSeed);
     }
 
     return perlinNoise(position + cachedOffset);
@@ -161,29 +162,41 @@ float simplexNoise(glm::vec2 const& position)  {
     return 70.0 * (n0 + n1 + n2);
 }
 
-float simplexNoiseSeeded(glm::vec2 const& position, int seed) {
+float simplexNoiseSeeded(glm::vec2 const& position, AppContext const& context) {
     // Cache computed offset because the same seed is used for many samples per frame.
     static int cachedSeed {};
     static glm::vec2 cachedOffset {};
 
-    if (seed != cachedSeed) {
-        cachedSeed = seed;
-        cachedOffset = seedToOffset2D(seed);
+    if (context.imageGenerationParameters.noiseSeed != cachedSeed) {
+        cachedSeed = context.imageGenerationParameters.noiseSeed;
+        cachedOffset = seedToOffset2D(cachedSeed);
     }
 
     return simplexNoise(position + cachedOffset);
 }
 
+//none
+
+float noneNoise(glm::vec2 const& position, AppContext const& context) {
+    return 1.0;
+};
+
+//gaussian
+
+float gaussianNoise(glm::vec2 const& position, AppContext const& context) {
+    return 0.0f;
+};
+
 //octave noise
 
-float octaveNoise(int nbOctave, glm::vec2 const& position, int seed, std::function<float(glm::vec2 const&, int)> noiseFunction) {
+float octaveNoise(int nbOctave, glm::vec2 const& position, AppContext const& context, NoiseFunction noiseFunction) {
     float value = 0.0f;
     float amplitude = 1.0f;
     float accA = 0.0f; //accumaltor to normalize afterward
     glm::vec2 pos = position;
 
     for (int i = 0; i < nbOctave; i++) {
-        value += amplitude * noiseFunction(pos + seedToOffset2D(i), seed);
+        value += amplitude * noiseFunction(pos + seedToOffset2D(i), context);
         accA += amplitude;
         pos.x *= 2.f;
         pos.y *= 2.f;

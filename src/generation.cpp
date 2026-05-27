@@ -89,9 +89,9 @@ void generateHeightmap(AppContext& context) {
     }
 
     //reset accumulated noise
-    if (context.imageGenerationParameters.noiseImage.data) {
-        UnloadImage(context.imageGenerationParameters.noiseImage);
-        context.imageGenerationParameters.noiseImage = {};
+    if (context.noiseImage.data) {
+        UnloadImage(context.noiseImage);
+        context.noiseImage = {};
     }
 
     int const resolution = std::max(1, context.imageGenerationParameters.resolution);
@@ -100,7 +100,7 @@ void generateHeightmap(AppContext& context) {
     //TODO: matrix gen
 
     //generate accumulated noises
-    context.imageGenerationParameters.noiseImage = GenImageFromNoiseFunction<float>(resolution, resolution, PIXELFORMAT_UNCOMPRESSED_R32,
+    context.noiseImage = GenImageFromNoiseFunction<float>(resolution, resolution, PIXELFORMAT_UNCOMPRESSED_R32,
         [&](glm::vec2 const& p)->float {
             if (context.imageGenerationParameters.noiseStack.empty()) {
                 return 0.f;
@@ -112,11 +112,9 @@ void generateHeightmap(AppContext& context) {
             for (Noise const& noise : context.imageGenerationParameters.noiseStack) {
                 glm::vec2 position = p * noise.scale;
                 acc += octaveNoise(
-                    noise.nbOctave, position, context.imageGenerationParameters.noiseSeed, noise.func
+                    noise.nbOctave, position, context, context.imageGenerationData.noiseFunctions[noise.type]
                 );
             }
-
-            //TODO: matrix sample
 
             //div
             acc /= static_cast<float>(context.imageGenerationParameters.noiseStack.size());
@@ -125,7 +123,7 @@ void generateHeightmap(AppContext& context) {
     );
 
     //generate the mask
-    context.imageGenerationParameters.maskImage = GenImageFromNoiseFunction<float>(resolution, resolution, PIXELFORMAT_UNCOMPRESSED_R32,
+    context.maskImage = GenImageFromNoiseFunction<float>(resolution, resolution, PIXELFORMAT_UNCOMPRESSED_R32,
         [&](glm::vec2 const& p)->float {
             return 1; //TODO: choose mask
         }
@@ -134,7 +132,7 @@ void generateHeightmap(AppContext& context) {
     //generate heightmap
     context.heightmapImage = GenImageFromNoiseFunction<float>(resolution, resolution, PIXELFORMAT_UNCOMPRESSED_R32,
         [&](glm::vec2 const& p)->float {
-            return sampleHeightmap(context.imageGenerationParameters.maskImage,p.x,p.y) * sampleHeightmap(context.imageGenerationParameters.noiseImage,p.x,p.y);
+            return sampleHeightmap(context.maskImage,p.x,p.y) * sampleHeightmap(context.noiseImage,p.x,p.y);
         }
     );
 

@@ -3,13 +3,18 @@
 #include <glm/glm.hpp>
 #include <functional>
 
-#include "app.hpp"
+// Forward declaration so noise functions can reference AppContext
+struct AppContext;
 
 float perlinNoise(glm::vec2 const& position);
-float perlinNoiseSeeded(glm::vec2 const& position, int seed);
+float perlinNoiseSeeded(glm::vec2 const& position, AppContext const& context);
 
 void initPerm();
 float simplexNoise(glm::vec2 const& position);
-float simplexNoiseSeeded(glm::vec2 const& position, int seed);
+float simplexNoiseSeeded(glm::vec2 const& position, AppContext const& context);
 
-float octaveNoise(int nbOctave,glm::vec2 const& position, int seed, std::function<float(glm::vec2 const&, int)> noiseFunction);
+float noneNoise(glm::vec2 const& position, AppContext const& context);
+
+float gaussianNoise(glm::vec2 const& position, AppContext const& context);
+
+float octaveNoise(int nbOctave,glm::vec2 const& position, AppContext const& context, std::function<float(glm::vec2 const&, AppContext const&)> noiseFunction);

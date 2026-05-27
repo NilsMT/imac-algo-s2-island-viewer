@@ -7,16 +7,25 @@
 #include <string>
 #include <cmath>
 
+//NOTE: change to number of noise
 enum NoiseType {
+    NONE,
     PERLIN,
     SIMPLEX,
+    GAUSSIAN,
 };
 
+static const char listStr[] = "None\0Perlin\0Simplex\0Gaussian\0";
+
+//forward declaration for noisefunction type
+struct AppContext;
+
+using NoiseFunction = std::function<float(glm::vec2 const&, AppContext const&)>;
+
 struct Noise {
-    std::function<float(glm::vec2 const&, int)> func;
-    int nbOctave {6};
+    int nbOctave {1};
     float scale {5.f};
-    int type { NoiseType::PERLIN };
+    int type { NoiseType::NONE };
 };
 
 struct ImageGenerationData {
@@ -26,7 +35,9 @@ struct ImageGenerationData {
             "resources/cm_mesa_32.png" 
         };
 
-        static std::function<float(glm::vec2 const&, int)> noiseFunctions[2];
+        static NoiseFunction noiseFunctions[4]; //NOTE: change to number of noise
+
+        const char* noiseListStr = listStr;
 };
 
 struct ImageGenerationParameters {
@@ -35,9 +46,8 @@ struct ImageGenerationParameters {
     int resolution { 256 };
     int selectedColorMap { 0 };
     bool colorMapLerp { true };
-    Image noiseImage {}; //the accumulated noise image
-    Image maskImage {}; //the mask
-    std::vector<Noise> noiseStack {};
+    std::vector<Noise> noiseStack { };
+    Noise mask {};
 };
 
 struct PointsGenerationParameters {
@@ -55,6 +65,8 @@ struct AppContext {
 
     // Store the heightmap as a raylib Image, which is easy to sample from CPU side when generating object positions.
     Image heightmapImage {};
+    Image noiseImage {}; //the accumulated noise image
+    Image maskImage {}; //the mask
 
     // This is the image we use for texturing the terrain. It can be the same as heightmapImage, but it doesn't have to be (for example, you could use a color image with RGB channels representing different material types instead of height).
     Image image {};
