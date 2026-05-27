@@ -48,7 +48,7 @@ Le code de l'échec est dans la branche [diamond-square-attempt](https://github.
 
 ## Avant
 
-La noise stack était simple : chaque bruit est une fonction qui prend une position et uun seed, et renvoie un float.
+La noise stack était simple : chaque bruit est une fonction qui prend une position et une seed, et renvoie un float.
 
 ```cpp
 struct Noise {
