@@ -60,27 +60,20 @@ float perlinNoiseSeeded(glm::vec2 const& position, int seed) {
 
 
 float octaveNoise(int nbOctave, glm::vec2 const& position, int seed, std::function<float(glm::vec2 const&, int)> noiseFunction) {
-    // TODO(student): Implement octave/fractal noise accumulation.
-
-    // noiseFunction est la fonction que l'on passe en entrée à notre fonction
-    // en fait, permet de dire quel fonction de bruit on veut utiliser si on en a plusieurs
-    // par exemple : perlinNoise
-
-    // Initial values
-    float value = 0.0;
-    float amplitude = .5;
+    float value = 0.0f;
+    float amplitude = 1.0f;
+    float accA = 0.0f; //accumaltor to normalize afterward
     glm::vec2 pos = position;
 
-
-    // Loop of octaves
     for (int i = 0; i < nbOctave; i++) {
         value += amplitude * noiseFunction(pos + seedToOffset2D(i), seed);
-        pos.x *= 2.;
-        pos.y *= 2.;
-        amplitude *= .5;
+        accA += amplitude;
+        pos.x *= 2.f;
+        pos.y *= 2.f;
+        amplitude *= 0.5f;
     }
 
-    return value;
+    return value / accA;
 }
 
 
