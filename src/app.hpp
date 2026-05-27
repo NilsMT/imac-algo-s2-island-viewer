@@ -7,10 +7,16 @@
 #include <string>
 #include <cmath>
 
+enum NoiseType {
+    PERLIN,
+    SIMPLEX,
+};
+
 struct Noise {
     std::function<float(glm::vec2 const&, int)> func;
     int nbOctave {6};
     float scale {5.f};
+    int type { NoiseType::PERLIN };
 };
 
 struct ImageGenerationData {
