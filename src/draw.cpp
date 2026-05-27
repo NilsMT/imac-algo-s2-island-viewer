@@ -126,7 +126,7 @@ void drawImGui(AppContext& context) {
                 if (ImGui::Combo("Noise", &selectedNoise, "Perlin\0Simplex\0")) {
                     noise.func = context.imageGenerationData.noiseFunctions[selectedNoise];
                 }
-                ImGui::SliderInt("Number of octaves", &noise.nbOctave, 0, 16);
+                ImGui::SliderInt("Number of octaves", &noise.nbOctave, 1, 8);
                 ImGui::SliderFloat("Scale", &noise.scale, 0.01f, 10.f);
 
                 if (ImGui::Button("Remove Noise"))

@@ -56,26 +56,6 @@ float perlinNoiseSeeded(glm::vec2 const& position, int seed) {
     return perlinNoise(position + cachedOffset);
 }
 
-
-float octaveNoise(int nbOctave, glm::vec2 const& position, int seed, std::function<float(glm::vec2 const&, int)> noiseFunction) {
-    float value = 0.0f;
-    float amplitude = 1.0f;
-    float accA = 0.0f; //accumaltor to normalize afterward
-    glm::vec2 pos = position;
-
-    for (int i = 0; i < nbOctave; i++) {
-        value += amplitude * noiseFunction(pos + seedToOffset2D(i), seed);
-        accA += amplitude;
-        pos.x *= 2.f;
-        pos.y *= 2.f;
-        amplitude *= 0.5f;
-    }
-
-    return value / accA;
-}
-
-
-
 //simplex from https://www.researchgate.net/publication/216813608_Simplex_noise_demystified
 
 static const glm::vec2 grad2[12] = {
@@ -159,4 +139,21 @@ float simplexNoiseSeeded(glm::vec2 const& position, int seed) {
     }
 
     return simplexNoise(position + cachedOffset);
+}
+
+float octaveNoise(int nbOctave, glm::vec2 const& position, int seed, std::function<float(glm::vec2 const&, int)> noiseFunction) {
+    float value = 0.0f;
+    float amplitude = 1.0f;
+    float accA = 0.0f; //accumaltor to normalize afterward
+    glm::vec2 pos = position;
+
+    for (int i = 0; i < nbOctave; i++) {
+        value += amplitude * noiseFunction(pos + seedToOffset2D(i), seed);
+        accA += amplitude;
+        pos.x *= 2.f;
+        pos.y *= 2.f;
+        amplitude *= 0.5f;
+    }
+
+    return value / accA;
 }
