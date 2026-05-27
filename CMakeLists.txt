@@ -76,9 +76,9 @@ FetchContent_Declare(raylib URL https://github.com/raysan5/raylib/archive/refs/t
 FetchContent_MakeAvailable(raylib)
 
 ## imgui (only required source/header files)
-set(IMGUI_VERSION "v1.92.1")
-set(IMGUI_DIR "${CMAKE_DEPS_DIR}/imgui_src")
-file(MAKE_DIRECTORY "${IMGUI_DIR}")
+# set(IMGUI_VERSION "v1.92.8")
+set(IMGUI_DIR "imgui")
+# file(MAKE_DIRECTORY "${IMGUI_DIR}")
 
 set(IMGUI_REQUIRED_FILES
     imgui.h
@@ -93,12 +93,12 @@ set(IMGUI_REQUIRED_FILES
     imgui_widgets.cpp
 )
 
-foreach(IMGUI_FILE IN LISTS IMGUI_REQUIRED_FILES)
-    download_if_missing(
-        "${IMGUI_DIR}/${IMGUI_FILE}"
-        "https://raw.githubusercontent.com/ocornut/imgui/${IMGUI_VERSION}/${IMGUI_FILE}"
-    )
-endforeach()
+# foreach(IMGUI_FILE IN LISTS IMGUI_REQUIRED_FILES)
+#     download_if_missing(
+#         "${IMGUI_DIR}/${IMGUI_FILE}"
+#         "https://raw.githubusercontent.com/Entrpi/imgui/${IMGUI_FILE}"
+#     )
+# endforeach()
 
 add_library(imgui STATIC
     ${IMGUI_DIR}/imgui.cpp
