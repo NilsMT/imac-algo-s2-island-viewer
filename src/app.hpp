@@ -30,6 +30,8 @@ struct Noise {
 };
 
 struct ImageGenerationData {
+        float sigma = 0.25f;
+
         const char* colorMaps[5] = { 
             "resources/cm_island_16.png","resources/cm_moutain_16.png",
             "resources/cm_elevation_16.png","resources/cm_rainbow_16.png",

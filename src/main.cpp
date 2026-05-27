@@ -58,6 +58,11 @@ int main() {
             NoiseType::PERLIN
         }
     );
+    context.imageGenerationParameters.mask = Noise {
+        1,
+        5.0f,
+        NoiseType::GAUSSIAN
+    };
 
     generateHeightmap(context);
     regenerateMeshFromImage(context);

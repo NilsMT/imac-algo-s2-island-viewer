@@ -13,26 +13,26 @@ https://dsmte.github.io/Learn--cpp_programming/Subjects/IMAC2028/S2/sujet
 > 🚧 : En cours ✅ : Fini ❌ : À faire
 > ♒ : Amélioration supplémentaire ☑️ : Amélioration de l'énoncé
 
-| Fait | Catégorie | En + | Tâche                                                               | Note        | Qui      |
-| ---- | --------- | ---- | ------------------------------------------------------------------- | ----------- | -------- |
-| ✅   | -         |      | Bruit fractal (FBM)                                                 |             | Matthieu |
-| 🚧   | -         |      | Générer heightmap + couleur                                         | TODO: mask  | Nils     |
-| ❌   | -         |      | Poisson disk sampling (2D) + placement en 3D                        |             | Matthieu |
-| ✅   | 🖥️ IHM    |      | Regénérer la heightmap                                              |             | Nils     |
-| ✅   | 🖥️ IHM    |      | Regénérer le mesh 3D                                                |             | Nils     |
-| ❌   | 🖥️ IHM    |      | Regénérer le poisson disk sampling                                  |             | -        |
-| ✅   | 🖥️ IHM    |      | Paramètres (seed, size, height range)                               |             | Nils     |
-| ❌   | -         | ☑️   | Colormap builder                                                    |             | -        |
-| ❌   | -         | ☑️   | Coloration avancé (ex: en fonction de la pente, type de biome, etc) |             | -        |
-| 🚧   | -         | ☑️   | Algorithmes différents bruit (Simplex, Worley, etc)                 | fix simplex | -        |
-| ✅   | -         | ☑️   | Pile d'Algorithmes de bruit                                         | fix simplex | -        |
-| ✅   | -         | ☑️   | Variation placement d'objet (taille, rotation)                      |             | -        |
-| ✅   | -         | ☑️   | Placement d'objet avec des conditions (pentes, hauteur)             |             | -        |
-| ❌   | -         | ☑️   | Importer un modèles 3D (libre de droits)à la place du cube          |             | -        |
-| ❌   | -         | ☑️   | Liste de modèles 3D (libre de droits) à placer avec conditions      |             | -        |
-| ❌   | -         | ☑️   | Biomes (colormap, liste d'objets, influence sur la hauteur, bruit)  |             | -        |
-| ❌   | -         | ☑️   | Connecter les îles avec des ponts, ou par la terre                  |             | -        |
-| ❌   | -         | ☑️   | Génération de différentes formes d'îles (au moins 3)                |             | -        |
+| Fait | Catégorie | En + | Tâche                                                               | Note       | Qui      |
+| ---- | --------- | ---- | ------------------------------------------------------------------- | ---------- | -------- |
+| ✅   | -         |      | Bruit fractal (FBM)                                                 |            | Matthieu |
+| ✅   | -         |      | Générer heightmap + couleur                                         | TODO: mask | Nils     |
+| ❌   | -         |      | Poisson disk sampling (2D) + placement en 3D                        |            | Matthieu |
+| ✅   | 🖥️ IHM    |      | Regénérer la heightmap                                              |            | Nils     |
+| ✅   | 🖥️ IHM    |      | Regénérer le mesh 3D                                                |            | Nils     |
+| ❌   | 🖥️ IHM    |      | Regénérer le poisson disk sampling                                  |            | -        |
+| ✅   | 🖥️ IHM    |      | Paramètres (seed, size, height range)                               |            | Nils     |
+| ❌   | -         | ☑️   | Colormap builder                                                    |            | -        |
+| ❌   | -         | ☑️   | Coloration avancé (ex: en fonction de la pente, type de biome, etc) |            | -        |
+| 🚧   | -         | ☑️   | Algorithmes différents bruit (Simplex, Worley, etc)                 | add DS     | -        |
+| ✅   | -         | ☑️   | Pile d'Algorithmes de bruit                                         |            | -        |
+| ✅   | -         | ☑️   | Variation placement d'objet (taille, rotation)                      |            | -        |
+| ✅   | -         | ☑️   | Placement d'objet avec des conditions (pentes, hauteur)             |            | -        |
+| ❌   | -         | ☑️   | Importer un modèles 3D (libre de droits)à la place du cube          |            | -        |
+| ❌   | -         | ☑️   | Liste de modèles 3D (libre de droits) à placer avec conditions      |            | -        |
+| ❌   | -         | ☑️   | Biomes (colormap, liste d'objets, influence sur la hauteur, bruit)  |            | -        |
+| ❌   | -         | ☑️   | Connecter les îles avec des ponts, ou par la terre                  |            | -        |
+| ❌   | -         | ☑️   | Génération de différentes formes d'îles (au moins 3)                |            | -        |
 
 # Informations supplémentaires
 

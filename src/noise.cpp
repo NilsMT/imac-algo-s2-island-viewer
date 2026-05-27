@@ -184,8 +184,16 @@ float noneNoise(glm::vec2 const& position, AppContext const& context) {
 //gaussian
 
 float gaussianNoise(glm::vec2 const& position, AppContext const& context) {
-    return 0.0f;
-};
+    float sigma = context.imageGenerationData.sigma;
+
+    float norm  = 1.0f / (2.0f * M_PI * pow(sigma,2));
+    float denom = 2.0f *pow(sigma,2);
+
+    float px = 0.5-position.x;
+    float py = 0.5-position.y;
+
+    return norm * exp(-(pow(px,2) + pow(py,2)) / denom);
+}
 
 //octave noise
 

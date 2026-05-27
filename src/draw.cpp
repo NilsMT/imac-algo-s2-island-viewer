@@ -79,180 +79,206 @@ void drawCubes(AppContext const& context, Matrix const& terrainCentering)
     }
 }
 
+// Utility: one call replaces ImGuiCustomSpace
+static void Spacing(int n = 1) {
+    for (int i = 0; i < n; i++) ImGui::Spacing();
+}
+
 void drawImGui(AppContext& context) {
-    if (ImGui::CollapsingHeader("Height map", ImGuiTreeNodeFlags_DefaultOpen)) {
-        ImGui::Indent();
+    // Tab bar - replaces the three top-level CollapsingHeaders
+    if (ImGui::BeginTabBar("MainTabs")) {
 
-        //image resolution
-        ImGui::SliderInt("Resolution",&context.imageGenerationParameters.resolution,16,1024);
+        //----------------------------------------------
+        // TAB 1 - HEIGHT MAP  (blue accent)
+        //----------------------------------------------
+        ImGui::PushStyleColor(ImGuiCol_Tab,             ImVec4(0.15f, 0.30f, 0.55f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_TabHovered,      ImVec4(0.25f, 0.45f, 0.80f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_TabActive,       ImVec4(0.20f, 0.40f, 0.75f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_Header,          ImVec4(0.20f, 0.40f, 0.75f, 0.35f));
+        ImGui::PushStyleColor(ImGuiCol_SliderGrab,      ImVec4(0.30f, 0.55f, 0.95f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_FrameBgActive,   ImVec4(0.20f, 0.40f, 0.75f, 0.50f));
 
-        if (ImGui::CollapsingHeader("Seeding", ImGuiTreeNodeFlags_DefaultOpen)) {
-            ImGui::Indent();
+        if (ImGui::BeginTabItem("Height Map")) {
+            Spacing(2);
 
-            //checkbox for random seed
-            ImGui::Checkbox("Random Seed",&context.imageGenerationParameters.isSeedRandom);
+            ImGui::SliderInt("Resolution", &context.imageGenerationParameters.resolution, 16, 1024);
 
-            //manual seed
-            ImGui::InputInt("Seed",&context.imageGenerationParameters.noiseSeed);
+            //-Seeding ----------------------------------------------
+            Spacing(2);
+            ImGui::SeparatorText("Seeding");
+            Spacing(1);
 
-            ImGui::Unindent();
-        }
+            ImGui::Checkbox("Random Seed", &context.imageGenerationParameters.isSeedRandom);
+            if (!context.imageGenerationParameters.isSeedRandom) {
+                ImGui::InputInt("Seed", &context.imageGenerationParameters.noiseSeed);
+            }
 
-        if (ImGui::CollapsingHeader("Color map", ImGuiTreeNodeFlags_DefaultOpen)) {
-            ImGui::Indent();
+            //-Color Map ----------------------------------------------
+            Spacing(2);
+            ImGui::SeparatorText("Color Map");
+            Spacing(1);
 
-            //color map
             ImGui::Combo(
-                "Color Map", 
-                &context.imageGenerationParameters.selectedColorMap, 
-                context.imageGenerationData.colorMaps, 
+                "Color Map",
+                &context.imageGenerationParameters.selectedColorMap,
+                context.imageGenerationData.colorMaps,
                 IM_ARRAYSIZE(context.imageGenerationData.colorMaps)
             );
+            ImGui::Checkbox("Lerp", &context.imageGenerationParameters.colorMapLerp);
 
-            //checkbox for lerping or no
-            ImGui::Checkbox("Color Map Lerp",&context.imageGenerationParameters.colorMapLerp);
+            //-Noise ----------------------------------------------
+            Spacing(2);
+            ImGui::SeparatorText("Noise");
+            Spacing(1);
 
-            ImGui::Unindent();
-        }
+            ImGui::SliderFloat("Gaussian Sigma", &context.imageGenerationData.sigma, 0.01f, 1.f);
 
-        if (ImGui::CollapsingHeader("Noises", ImGuiTreeNodeFlags_DefaultOpen)) {
-            ImGui::Indent();
-                
-            if (ImGui::CollapsingHeader("Noise stack", ImGuiTreeNodeFlags_DefaultOpen)) {
-                ImGui::Indent();
-            
-                for (size_t i = 0; i < context.imageGenerationParameters.noiseStack.size(); i++) {
-                    Noise& noise = context.imageGenerationParameters.noiseStack[i];
-                    ImGui::PushID(i);
+            // Noise stack
+            Spacing(2);
+            ImGui::TextDisabled("Noise Stack");
+            Spacing(1);
 
-                    //noise dropdown
-                    ImGui::Combo("Noise", &noise.type, context.imageGenerationData.noiseListStr);
-                    
-                    //octaves
-                    ImGui::SliderInt("Octaves", &noise.nbOctave, 1, 8);
+            for (size_t i = 0; i < context.imageGenerationParameters.noiseStack.size(); i++) {
+                Noise& noise = context.imageGenerationParameters.noiseStack[i];
+                ImGui::PushID((int)i);
 
-                    //scale
-                    ImGui::SliderFloat("Scale", &noise.scale, 0.01f, 10.f);
+                //indent group
+                ImGui::Indent(8.f);
 
-                    //remove noise
-                    if (ImGui::Button("Remove Noise"))
-                        context.imageGenerationParameters.noiseStack.erase(
-                            context.imageGenerationParameters.noiseStack.begin() + i--);
+                char label[32];
+                snprintf(label, sizeof(label), "Layer %zu", i + 1);
+                ImGui::TextDisabled("%s", label);
 
+                ImGui::Combo("Type",    &noise.type, context.imageGenerationData.noiseListStr);
+                ImGui::SliderInt("Octaves", &noise.nbOctave, 1, 8);
+                ImGui::SliderFloat("Scale", &noise.scale, 0.01f, 10.f);
 
-                    ImGui::Separator();
+                if (ImGui::Button("Remove"))
+                    context.imageGenerationParameters.noiseStack.erase(
+                        context.imageGenerationParameters.noiseStack.begin() + i--);
 
+                ImGui::Unindent(8.f);
+                ImGui::Separator();
 
-                    ImGui::PopID();
-                }
-
-                //add noise
-                if (ImGui::Button("Add Noise")) {
-                    Noise newNoise{};
-                    newNoise.type = NoiseType::PERLIN; // default to perlin
-                    context.imageGenerationParameters.noiseStack.push_back(newNoise);
-                }
-
-                ImGui::Unindent();
+                ImGui::PopID();
             }
 
-
-            if (ImGui::CollapsingHeader("Mask", ImGuiTreeNodeFlags_DefaultOpen)) {
-                ImGui::Indent();
-
-                //noise dropdown
-                ImGui::Combo("Noise", &context.imageGenerationParameters.mask.type, context.imageGenerationData.noiseListStr);
-                
-                //octaves
-                ImGui::SliderInt("Octaves", &context.imageGenerationParameters.mask.nbOctave, 1, 8);
-
-                //scale
-                ImGui::SliderFloat("Scale", &context.imageGenerationParameters.mask.scale, 0.01f, 10.f);
-
-                ImGui::Unindent();
+            if (ImGui::Button("+ Add Noise Layer")) {
+                Noise newNoise{};
+                newNoise.type = NoiseType::PERLIN;
+                context.imageGenerationParameters.noiseStack.push_back(newNoise);
             }
 
-            ImGui::Unindent();
+            //-Mask ----------------------------------------------
+            Spacing(2);
+            ImGui::SeparatorText("Mask");
+            Spacing(1);
+
+            ImGui::Combo("Type",    &context.imageGenerationParameters.mask.type, context.imageGenerationData.noiseListStr);
+
+            Spacing(2);
+            ImGui::EndTabItem();
         }
+        ImGui::PopStyleColor(6);
 
-        ImGui::Unindent();
-    }
+        //----------------------------------------------
+        // TAB 2 - OBJECTS  (green accent)
+        //----------------------------------------------
+        ImGui::PushStyleColor(ImGuiCol_Tab,             ImVec4(0.10f, 0.40f, 0.20f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_TabHovered,      ImVec4(0.18f, 0.60f, 0.32f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_TabActive,       ImVec4(0.14f, 0.52f, 0.26f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_Header,          ImVec4(0.14f, 0.52f, 0.26f, 0.35f));
+        ImGui::PushStyleColor(ImGuiCol_SliderGrab,      ImVec4(0.22f, 0.75f, 0.40f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_FrameBgActive,   ImVec4(0.14f, 0.52f, 0.26f, 0.50f));
 
-    if (ImGui::CollapsingHeader("Object", ImGuiTreeNodeFlags_DefaultOpen)) {
-        ImGui::Indent();
+        if (ImGui::BeginTabItem("Objects")) {
+            Spacing(2);
 
-        //cube size
-        ImGui::SliderFloat("Cube Scale", &context.cubeScale, 0.01f, 1.0f);
-        
-        //height treshold
-        //https://github.com/Entrpi/imgui/tree/feature/slider-range2
-        ImGui::SliderFloatRange2(
-            "Height Spawn Range",
-            &context.pointsGenerationParameters.heightTreshold.x,
-            &context.pointsGenerationParameters.heightTreshold.y, 
-            0.0f,1.0f
-        );
+            ImGui::SliderFloat("Cube Scale", &context.cubeScale, 0.01f, 1.0f);
 
-        if (ImGui::CollapsingHeader("Randomization", ImGuiTreeNodeFlags_DefaultOpen)) {
-            ImGui::Indent();
+            ImGui::SliderFloatRange2(
+                "Height Spawn Range",
+                &context.pointsGenerationParameters.heightTreshold.x,
+                &context.pointsGenerationParameters.heightTreshold.y,
+                0.0f, 1.0f
+            );
 
-            //checkbox for random object rotation
-            ImGui::Checkbox("Random Object Rotations",&context.pointsGenerationParameters.isRotationRandom);
+            //-Randomization ----------------------------------------------
+            Spacing(2);
+            ImGui::SeparatorText("Randomization");
+            Spacing(1);
 
-            //params for random object rotation
-            //https://github.com/ocornut/imgui/issues/779
+            ImGui::Checkbox("Random Rotations", &context.pointsGenerationParameters.isRotationRandom);
             if (context.pointsGenerationParameters.isRotationRandom) {
-                ImGui::SliderFloat3("Rotation Offset", (float*)&context.pointsGenerationParameters.rotationOffset, 0.0f, 360.0f);
+                ImGui::SliderFloat3("Rotation Offset",
+                    (float*)&context.pointsGenerationParameters.rotationOffset, 0.f, 360.f);
             }
 
-            //checkbox for random object scale
-            ImGui::Checkbox("Random Object Scale",&context.pointsGenerationParameters.isScaleRandom);
-
-            //params for random object scale
-            //https://github.com/ocornut/imgui/issues/779
+            Spacing(1);
+            ImGui::Checkbox("Random Scale", &context.pointsGenerationParameters.isScaleRandom);
             if (context.pointsGenerationParameters.isScaleRandom) {
-                ImGui::SliderFloat3("Scale Offset", (float*)&context.pointsGenerationParameters.scaleOffset, 0.0f, 10.0f);
+                ImGui::SliderFloat3("Scale Offset",
+                    (float*)&context.pointsGenerationParameters.scaleOffset, 0.f, 10.f);
             }
 
-            ImGui::Unindent();
+            Spacing(2);
+            ImGui::EndTabItem();
         }
+        ImGui::PopStyleColor(6);
 
-        ImGui::Unindent();
-    }
+        //----------------------------------------------
+        // TAB 3 - ACTIONS  (orange accent)
+        //----------------------------------------------
+        ImGui::PushStyleColor(ImGuiCol_Tab,             ImVec4(0.55f, 0.30f, 0.05f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_TabHovered,      ImVec4(0.80f, 0.48f, 0.10f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_TabActive,       ImVec4(0.70f, 0.40f, 0.08f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_Button,          ImVec4(0.55f, 0.28f, 0.05f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered,   ImVec4(0.75f, 0.42f, 0.10f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive,    ImVec4(0.90f, 0.55f, 0.15f, 1.f));
 
-    if (ImGui::CollapsingHeader("Buttons", ImGuiTreeNodeFlags_DefaultOpen)) {
-        ImGui::Indent();
+        if (ImGui::BeginTabItem("Actions")) {
+            Spacing(2);
 
-        //reload heightmap color
-        if (ImGui::Button("Reload Color Map")) {
-            generateHeightmap(context);
+            float btnWidth = ImGui::GetContentRegionAvail().x;
+
+            if (ImGui::Button("Reload Color Map",      ImVec2(btnWidth, 0)))
+                generateHeightmap(context);
+
+            Spacing(1);
+            if (ImGui::Button("Regenerate Heightmap",  ImVec2(btnWidth, 0))) {
+                setupSeed(context);
+                generateHeightmap(context);
+            }
+
+            Spacing(1);
+            if (ImGui::Button("Regenerate Mesh",       ImVec2(btnWidth, 0)))
+                regenerateMeshFromImage(context);
+
+            Spacing(1);
+            if (ImGui::Button("Regenerate Objects",    ImVec2(btnWidth, 0)))
+                generateObjectsPositions(context);
+
+            Spacing(2);
+            ImGui::Separator();
+            Spacing(2);
+
+            //regen all bigger
+            ImGui::PushStyleColor(ImGuiCol_Button,        ImVec4(0.70f, 0.38f, 0.05f, 1.f));
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered,  ImVec4(0.90f, 0.52f, 0.12f, 1.f));
+            if (ImGui::Button("Regenerate All",            ImVec2(btnWidth, 36.f))) {
+                setupSeed(context);
+                generateHeightmap(context);
+                regenerateMeshFromImage(context);
+                generateObjectsPositions(context);
+            }
+            ImGui::PopStyleColor(2);
+
+            Spacing(2);
+            ImGui::EndTabItem();
         }
+        ImGui::PopStyleColor(6);
 
-        //regen heightmap
-        if (ImGui::Button("Regenerate Heightmap")) {
-            setupSeed(context);
-            generateHeightmap(context);
-        }
-
-        //regen mesh
-        if (ImGui::Button("Regenerate Mesh")) {
-            regenerateMeshFromImage(context);
-        }
-
-        //replace cubes
-        if(ImGui::Button("Regenerate Objects")) {
-            generateObjectsPositions(context);
-        }
-
-        //regen all
-        if (ImGui::Button("Regenerate All")) {
-            setupSeed(context);
-            generateHeightmap(context);
-            regenerateMeshFromImage(context);
-            generateObjectsPositions(context);
-        }
-
-        ImGui::Unindent();
+        ImGui::EndTabBar();
     }
 }
 
