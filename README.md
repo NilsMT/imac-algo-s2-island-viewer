@@ -1,6 +1,6 @@
 https://dsmte.github.io/Learn--cpp_programming/Subjects/IMAC2028/S2/sujet
 
-- [Répartition des tâches](#répartition-des-tâches)
+- [Liste des tâches](#liste-des-tâches)
 - [Informations supplémentaires](#informations-supplémentaires)
 - [L'échec de l'ajout du Diamond Square](#léchec-de-lajout-du-diamond-square)
     - [Avant](#avant)
@@ -8,7 +8,7 @@ https://dsmte.github.io/Learn--cpp_programming/Subjects/IMAC2028/S2/sujet
     - [Ce qu'on a fait](#ce-quon-a-fait)
     - [Pourquoi c'est pas idéal](#pourquoi-cest-pas-idéal)
 
-# Répartition des tâches
+# Liste des tâches
 
 > 🚧 : En cours ✅ : Fini ❌ : À faire
 > ♒ : Amélioration supplémentaire ☑️ : Amélioration de l'énoncé
@@ -28,7 +28,7 @@ https://dsmte.github.io/Learn--cpp_programming/Subjects/IMAC2028/S2/sujet
 | ✅   | -         | ☑️   | Pile d'Algorithmes de bruit                                         |      | Nils     |
 | ✅   | -         | ☑️   | Variation placement d'objet (taille, rotation)                      |      | Nils     |
 | ✅   | -         | ☑️   | Placement d'objet avec des conditions (pentes, hauteur)             |      | Nils     |
-| ❌   | -         | ☑️   | Importer un modèles 3D (libre de droits)à la place du cube          |      | -        |
+| ❌   | -         | ☑️   | Importer un modèles 3D (libre de droits) à la place du cube         |      | -        |
 | ❌   | -         | ☑️   | Liste de modèles 3D (libre de droits) à placer avec conditions      |      | -        |
 | ❌   | -         | ☑️   | Biomes (colormap, liste d'objets, influence sur la hauteur, bruit)  |      | -        |
 | ❌   | -         | ☑️   | Connecter les îles avec des ponts, ou par la terre                  |      | -        |
