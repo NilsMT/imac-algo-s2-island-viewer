@@ -5,6 +5,7 @@
 
 #include "utils/pathUtils.hpp"
 #include "utils/raylibUtils.hpp"
+#include "utils/randFloat.hpp"
 #include <algorithm> // for std::clamp
 
 
@@ -32,12 +33,31 @@ void generateObjectsPositions(AppContext& context) {
     context.objectPositions.clear();
     context.objectPositions.reserve(positions.size());
 
+    context.objectsRandData.clear();
+
     for (glm::vec2 const& p : positions) {
         float z = sampleHeightmap(context.heightmapImage, p.x, p.y);
 
         if (context.pointsGenerationParameters.heightTreshold[0] <= z &&
             z <= context.pointsGenerationParameters.heightTreshold[1]) {
             context.objectPositions.emplace_back(p.x, p.y, z);
+
+            //store randomization
+            ObjectRandomizationData objRand = {};
+
+            if (context.pointsGenerationParameters.isScaleRandom) {
+                objRand.scaleOffset = { randF(),randF(),randF() };
+            } else {
+                objRand.scaleOffset = { 0,0,0 };
+            }
+
+            if (context.pointsGenerationParameters.isRotationRandom) {
+                objRand.rotOffset = { randF(),randF(),randF() };
+            } else {
+                objRand.rotOffset = { 0,0,0 };
+            }
+
+            context.objectsRandData.push_back(objRand);
         }
     }
 }
@@ -95,9 +115,6 @@ void generateHeightmap(AppContext& context) {
     }
 
     int const resolution = std::max(1, context.imageGenerationParameters.resolution);
-
-    //generate previous noises (if matrix)
-    //TODO: matrix gen
 
     //generate accumulated noises
     context.noiseImage = GenImageFromNoiseFunction<float>(resolution, resolution, PIXELFORMAT_UNCOMPRESSED_R32,

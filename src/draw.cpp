@@ -30,7 +30,10 @@ void drawCubes(AppContext const& context, Matrix const& terrainCentering)
 
     float const cubeHalfHeight { 0.5f * context.cubeScale };
 
-    for (glm::vec3 const& pos : context.objectPositions) {
+    for (int i = 0; i < context.objectPositions.size(); i++) {
+        glm::vec3 const& pos = context.objectPositions[i];
+        ObjectRandomizationData objRand = context.objectsRandData[i];
+
         //classic params
         Matrix const objectTranslation {
             MatrixTranslate(
@@ -49,17 +52,17 @@ void drawCubes(AppContext const& context, Matrix const& terrainCentering)
 
         if (context.pointsGenerationParameters.isScaleRandom) {
             scaleOff = {
-                context.pointsGenerationParameters.scaleOffset[0] * randF(),
-                context.pointsGenerationParameters.scaleOffset[1] * randF(),
-                context.pointsGenerationParameters.scaleOffset[2] * randF()
+                context.pointsGenerationParameters.scaleOffset[0] * objRand.scaleOffset.x,
+                context.pointsGenerationParameters.scaleOffset[1] * objRand.scaleOffset.y,
+                context.pointsGenerationParameters.scaleOffset[2] * objRand.scaleOffset.z
             };
         };
 
         if (context.pointsGenerationParameters.isRotationRandom) {
             rotOff = {
-                glm::radians(context.pointsGenerationParameters.rotationOffset[0]) * randF(),
-                glm::radians(context.pointsGenerationParameters.rotationOffset[1]) * randF(),
-                glm::radians(context.pointsGenerationParameters.rotationOffset[2]) * randF()
+                glm::radians(context.pointsGenerationParameters.rotationOffset[0]) * objRand.rotOffset.x,
+                glm::radians(context.pointsGenerationParameters.rotationOffset[1]) * objRand.rotOffset.y,
+                glm::radians(context.pointsGenerationParameters.rotationOffset[2]) * objRand.rotOffset.z
             };
         };
 

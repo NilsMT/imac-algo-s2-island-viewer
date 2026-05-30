@@ -29,6 +29,11 @@ struct Noise {
     int type { NoiseType::NONE };
 };
 
+struct ObjectRandomizationData {
+    Vector3 scaleOffset {};
+    Vector3 rotOffset {};
+};
+
 struct ImageGenerationData {
         float sigma = 0.25f;
 
@@ -70,6 +75,8 @@ struct AppContext {
     Image heightmapImage {};
     Image noiseImage {}; //the accumulated noise image
     Image maskImage {}; //the mask
+
+    std::vector<ObjectRandomizationData> objectsRandData {}; //store randomization datas
 
     // This is the image we use for texturing the terrain. It can be the same as heightmapImage, but it doesn't have to be (for example, you could use a color image with RGB channels representing different material types instead of height).
     Image image {};
