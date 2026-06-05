@@ -93,7 +93,9 @@ std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] P
             // et parce qu'on utilise cos et sin, ce point peut être situé tout autour du pointActif
             float x = cos(angle);
             float y = sin(angle);
-            glm::vec2 pointCandidat = radius * glm::vec2{x, y}; // on le place sur l'axe x et y (formule :  x = radius * cos(alpha)   et y = radius * cos(alpha))
+
+            // on place un point aléatoirement autour du point actif
+            glm::vec2 pointCandidat = pointActifAleatoire + radius * glm::vec2{x, y}; // on le place sur l'axe x et y (formule :  x = radius * cos(alpha)   et y = radius * cos(alpha))
 
             // on s'assure que le point candidat reste bien dans sa zone entre 0 et 1 en x et y.
             // sinon, on ne rentre pas dans le if ce qui nous force à passer au point candidat suivant
@@ -119,7 +121,7 @@ std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] P
                     }
 
                     j++;
-                    cout << "distance: " << distance << " --- r: " << r << " --- j: " << j << " --- points.size(): " << points.size() << "       AAAAAAAAAAAAAAAAAAAA" << endl;
+                    cout << "distance: " << distance << " --- r: " << r << " --- j: " << j << " --- points.size(): " << points.size() << "--- pointsActif.size(): " << pointsActif.size() << "       AAAAAAAAAAAAAAAAAAAA" << endl;
                 }
 
 
