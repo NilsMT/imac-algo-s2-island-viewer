@@ -47,10 +47,11 @@ std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] P
         };
     */
 
-
+    // Choisir un point actif aléatoire
+    srand(time(0));
 
     float r = params.poissonRadius;
-    int cellSize = r/sqrt(2);
+    float cellSize = r/sqrt(2);
     int k = 100; // k points candidats autour du point actif
     //int r = 5; // r est la distance minimale
 
@@ -59,19 +60,30 @@ std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] P
     // sampleRegionSize par 1
 
     // int grid[1/cellSize][1/cellSize];
+    int grilleLargeur = ceil(1.f / cellSize);
+    int grilleHauteur = ceil(1.f / cellSize);
+
+    std::cout
+        << "r=" << r
+        << " cellSize=" << cellSize
+        << " largeur=" << grilleLargeur
+        << '\n';
+
+    vector<vector<float>> grille(grilleLargeur, vector<float>(grilleHauteur, 0.0f));
+
+
     std::vector<glm::vec2> points {};
     std::vector<glm::vec2> pointsActif {};
 
 
     // Choisir un point de départ aléatoire et l'ajouter à une liste de points actifs
     pointsActif.push_back({0.5, 0.5});
+    points.push_back({0.5, 0.5});
 
 
     // Tant que la liste de points actifs n'est pas vide:
     while (!pointsActif.empty())
     {
-        // Choisir un point actif aléatoire
-        srand(time(0));
         int indexPointActifAleatoire = rand() % pointsActif.size();
         glm::vec2 pointActifAleatoire = pointsActif[indexPointActifAleatoire];
 
@@ -91,6 +103,7 @@ std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] P
 
             // pour que ça soit plus propre, on va le placer de manière circulaire et non carré
             // et parce qu'on utilise cos et sin, ce point peut être situé tout autour du pointActif
+            // ATTENTION x et y N'ONT RIEN À VOIR AVEC UNE POSITION SUR NOTRE GRILLE
             float x = cos(angle);
             float y = sin(angle);
 
@@ -99,7 +112,7 @@ std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] P
 
             // on s'assure que le point candidat reste bien dans sa zone entre 0 et 1 en x et y.
             // sinon, on ne rentre pas dans le if ce qui nous force à passer au point candidat suivant
-            if (x >= 0 && x <= 1 && y >= 0 && y <= 1)
+            if (x >= 0.f && x <= 1.f && y >= 0.f && y <= 1.f)
             {
 
                 cout << "x: " << x << " y: " << y << endl;
@@ -134,7 +147,16 @@ std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] P
                     pointsActif.push_back(pointCandidat);
                     points.push_back(pointCandidat);
 
-                    nbPointsCandidatValide++;
+                    int grilleX = pointCandidat.x / cellSize;
+                    int grilleY = pointCandidat.y / cellSize;
+
+                    if (grilleX >= 0.f && grilleX <= 1.f && grilleY >= 0.f && grilleY <= 1.f)
+                    {
+                        cout << "=== " << grilleX << "(" << pointCandidat.x << " / " << cellSize << ")" << ", " << grilleY << endl;
+
+                        grille[grilleX][grilleY] = points.size();
+                        nbPointsCandidatValide++;
+                    }
                 }
             }
         }
