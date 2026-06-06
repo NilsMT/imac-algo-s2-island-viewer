@@ -67,16 +67,18 @@ void drawCones(AppContext const& context, Matrix const& terrainCentering)
         };
 
         //compute matrix
-        Matrix localScale   { MatrixScale(context.coneScale + scaleOff.x,
-                                        context.coneScale + scaleOff.y,
-                                        context.coneScale + scaleOff.z) };
-        Matrix localRotate  { MatrixRotateXYZ(rotOff) };
+        Matrix localScale = MatrixScale(
+            context.coneScale + scaleOff.x,
+            context.coneScale + scaleOff.y,
+            context.coneScale + scaleOff.z
+        );
+        Matrix localRotate = MatrixRotateXYZ(rotOff);
 
         //scale then rotate
-        Matrix localTransform { MatrixMultiply(localScale, localRotate) };
+        Matrix localTransform = MatrixMultiply(localScale, localRotate);
 
         // Then apply world-space translation last
-        Matrix transform { MatrixMultiply(localTransform, centeredTranslation) };
+        Matrix transform = MatrixMultiply(localTransform, centeredTranslation);
 
         DrawMesh(context.cone, context.coneMaterial, transform);
     }
@@ -121,7 +123,7 @@ void drawImGui(AppContext& context) {
             ImGui::SeparatorText("Mask");
             Spacing(1);
 
-            ImGui::Combo("Type",    &context.imageGenerationParameters.mask.type, context.imageGenerationData.noiseListStr);
+            ImGui::Combo("Type", &context.imageGenerationParameters.mask.type, context.imageGenerationData.noiseListStr);
 
             Spacing(2);
             ImGui::EndMenu();
@@ -181,17 +183,19 @@ void drawImGui(AppContext& context) {
                 //indent group
                 ImGui::Indent(8.f);
 
-                char label[32];
-                snprintf(label, sizeof(label), "Layer %zu", i + 1);
-                ImGui::Text("%s", label);
+                std::string label = "Layer " + std::to_string(i + 1);
+                ImGui::Text(label.c_str());
 
-                ImGui::Combo("Type",    &noise.type, context.imageGenerationData.noiseListStr);
+                ImGui::Combo("Type", &noise.type, context.imageGenerationData.noiseListStr);
                 ImGui::SliderInt("Octaves", &noise.nbOctave, 1, 8);
                 ImGui::SliderFloat("Scale", &noise.scale, 0.01f, 10.f);
 
-                if (ImGui::Button("Remove"))
-                    context.imageGenerationParameters.noiseStack.erase(
-                        context.imageGenerationParameters.noiseStack.begin() + i--);
+                if (ImGui::Button("Remove")) {
+                    // https://en.cppreference.com/w/cpp/container/vector/erase
+                    auto it = context.imageGenerationParameters.noiseStack.begin() + i; //auto because type is long af
+                    context.imageGenerationParameters.noiseStack.erase(it);
+                    i--;
+                }
 
                 ImGui::Unindent(8.f);
                 ImGui::Separator();
@@ -247,15 +251,19 @@ void drawImGui(AppContext& context) {
 
             ImGui::Checkbox("Random Rotations", &context.pointsGenerationParameters.isRotationRandom);
             if (context.pointsGenerationParameters.isRotationRandom) {
-                ImGui::SliderFloat3("Rotation Offset",
-                    (float*)&context.pointsGenerationParameters.rotationOffset, 0.f, 360.f);
+                ImGui::SliderFloat3(
+                    "Rotation Offset",
+                    (float*)&context.pointsGenerationParameters.rotationOffset, 0.f, 360.f
+                );
             }
 
             Spacing(1);
             ImGui::Checkbox("Random Scale", &context.pointsGenerationParameters.isScaleRandom);
             if (context.pointsGenerationParameters.isScaleRandom) {
-                ImGui::SliderFloat3("Scale Offset",
-                    (float*)&context.pointsGenerationParameters.scaleOffset, 0.f, 10.f);
+                ImGui::SliderFloat3(
+                    "Scale Offset",
+                    (float*)&context.pointsGenerationParameters.scaleOffset, 0.f, 10.f
+                );
             }
 
             Spacing(2);
@@ -278,21 +286,21 @@ void drawImGui(AppContext& context) {
 
             float btnWidth = ImGui::GetContentRegionAvail().x;
 
-            if (ImGui::Button("Reload Color Map",      ImVec2(btnWidth, 0)))
+            if (ImGui::Button("Reload Color Map", ImVec2(btnWidth, 0)))
                 generateHeightmap(context);
 
             Spacing(1);
-            if (ImGui::Button("Regenerate Heightmap",  ImVec2(btnWidth, 0))) {
+            if (ImGui::Button("Regenerate Heightmap", ImVec2(btnWidth, 0))) {
                 setupSeed(context);
                 generateHeightmap(context);
             }
 
             Spacing(1);
-            if (ImGui::Button("Regenerate Mesh",       ImVec2(btnWidth, 0)))
+            if (ImGui::Button("Regenerate Mesh", ImVec2(btnWidth, 0)))
                 regenerateMeshFromImage(context);
 
             Spacing(1);
-            if (ImGui::Button("Regenerate Objects",    ImVec2(btnWidth, 0)))
+            if (ImGui::Button("Regenerate Objects", ImVec2(btnWidth, 0)))
                 generateObjectsPositions(context);
 
             Spacing(2);
@@ -300,8 +308,8 @@ void drawImGui(AppContext& context) {
             Spacing(2);
 
             //regen all bigger
-            ImGui::PushStyleColor(ImGuiCol_Button,        ImVec4(0.70f, 0.38f, 0.05f, 1.f));
-            ImGui::PushStyleColor(ImGuiCol_ButtonHovered,  ImVec4(0.90f, 0.52f, 0.12f, 1.f));
+            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.70f, 0.38f, 0.05f, 1.f));
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.90f, 0.52f, 0.12f, 1.f));
             if (ImGui::Button("Regenerate All", ImVec2(btnWidth, 36.f))) {
                 setupSeed(context);
                 generateHeightmap(context);
