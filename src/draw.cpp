@@ -16,19 +16,19 @@ void draw3DScene(AppContext& context) {
     Vector3 const terrainCenterOffset { terrainCentering.m12, terrainCentering.m13, terrainCentering.m14 };
 
     DrawModel(context.model, terrainCenterOffset, 1.0f, WHITE);
-    drawCubes(context, terrainCentering);
+    drawCones(context, terrainCentering);
     DrawGrid(20, 1.0f);
 
     EndMode3D();
 }
 
-void drawCubes(AppContext const& context, Matrix const& terrainCentering)
+void drawCones(AppContext const& context, Matrix const& terrainCentering)
 {
     if (context.objectPositions.empty()) {
         return;
     }
 
-    float const cubeHalfHeight { 0.5f * context.cubeScale };
+    float const coneHalfHeight { 0.5f * context.coneScale };
 
     for (int i = 0; i < context.objectPositions.size(); i++) {
         glm::vec3 const& pos = context.objectPositions[i];
@@ -38,7 +38,7 @@ void drawCubes(AppContext const& context, Matrix const& terrainCentering)
         Matrix const objectTranslation {
             MatrixTranslate(
                 pos.x * context.terrainSize.x,
-                pos.z * context.terrainSize.y + cubeHalfHeight,
+                pos.z * context.terrainSize.y + coneHalfHeight,
                 pos.y * context.terrainSize.z
             )
         };
@@ -67,9 +67,9 @@ void drawCubes(AppContext const& context, Matrix const& terrainCentering)
         };
 
         //compute matrix
-        Matrix localScale   { MatrixScale(context.cubeScale + scaleOff.x,
-                                        context.cubeScale + scaleOff.y,
-                                        context.cubeScale + scaleOff.z) };
+        Matrix localScale   { MatrixScale(context.coneScale + scaleOff.x,
+                                        context.coneScale + scaleOff.y,
+                                        context.coneScale + scaleOff.z) };
         Matrix localRotate  { MatrixRotateXYZ(rotOff) };
 
         //scale then rotate
@@ -78,7 +78,7 @@ void drawCubes(AppContext const& context, Matrix const& terrainCentering)
         // Then apply world-space translation last
         Matrix transform { MatrixMultiply(localTransform, centeredTranslation) };
 
-        DrawMesh(context.cube, context.cubeMaterial, transform);
+        DrawMesh(context.cone, context.coneMaterial, transform);
     }
 }
 
@@ -223,7 +223,7 @@ void drawImGui(AppContext& context) {
         if (ImGui::BeginMenu("Objects")) {
             Spacing(2);
 
-            ImGui::SliderFloat("Cube Scale", &context.cubeScale, 0.01f, 1.0f);
+            ImGui::SliderFloat("Cone Scale", &context.coneScale, 0.01f, 1.0f);
 
             ImGui::SliderFloatRange2(
                 "Height Spawn Range",

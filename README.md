@@ -3,10 +3,10 @@ https://dsmte.github.io/Learn--cpp_programming/Subjects/IMAC2028/S2/sujet
 - [Liste des tâches](#liste-des-tâches)
 - [Informations supplémentaires](#informations-supplémentaires)
 - [L'échec de l'ajout du Diamond Square](#léchec-de-lajout-du-diamond-square)
-    - [Avant](#avant)
-    - [Le problème](#le-problème)
-    - [Ce qu'on a fait](#ce-quon-a-fait)
-    - [Pourquoi c'est pas idéal](#pourquoi-cest-pas-idéal)
+  - [Avant](#avant)
+  - [Le problème](#le-problème)
+  - [Ce qu'on a fait](#ce-quon-a-fait)
+  - [Pourquoi c'est pas idéal](#pourquoi-cest-pas-idéal)
 
 # Liste des tâches
 
@@ -41,6 +41,8 @@ https://dsmte.github.io/Learn--cpp_programming/Subjects/IMAC2028/S2/sujet
 > Avec `NOTE:` et `SOURCE:` d'ajoutée dans [todo-tree.general.tags](vscode://settings/todo-tree.general.tags)
 >
 > Il est aussi recommandé d'utiliser l'`Outline` dans le panneau de droite de `VS Code`
+
+> Il y a des fichiers qui ont des indentations bizarres à cause d'un formatage qui s'est mal passé (en faisant Ctrl + P et puis format document)
 
 # L'échec de l'ajout du Diamond Square
 

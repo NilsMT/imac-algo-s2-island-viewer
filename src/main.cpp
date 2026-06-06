@@ -28,9 +28,9 @@ int main() {
 
     AppContext context {};
 
-    context.cube = GenMeshCube(1.0f, 1.0f, 1.0f);
-    context.cubeMaterial = LoadMaterialDefault();
-    context.cubeMaterial.maps[MATERIAL_MAP_DIFFUSE].color = RED;
+    context.cone = GenMeshCone(1.0f, 1.25f, 16);
+    context.coneMaterial = LoadMaterialDefault();
+    context.coneMaterial.maps[MATERIAL_MAP_DIFFUSE].color = Color{15, 74, 19, 255};
     
     // Define our custom camera to look into our 3d world
     context.camera = {

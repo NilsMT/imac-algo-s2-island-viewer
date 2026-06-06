@@ -32,14 +32,14 @@ void unload(AppContext& context) {
         context.mesh = {};
     }
 
-    if (context.cubeMaterial.shader.id > 0) {
-        UnloadMaterial(context.cubeMaterial);
-        context.cubeMaterial = {};
+    if (context.coneMaterial.shader.id > 0) {
+        UnloadMaterial(context.coneMaterial);
+        context.coneMaterial = {};
     }
 
-    if (context.cube.vertexCount > 0) {
-        UnloadMesh(context.cube);
-        context.cube = {};
+    if (context.cone.vertexCount > 0) {
+        UnloadMesh(context.cone);
+        context.cone = {};
     }
 }
 
