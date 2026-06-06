@@ -232,6 +232,14 @@ void drawImGui(AppContext& context) {
                 0.0f, 1.0f
             );
 
+            //-Poisson Disk Smapling --------------------------------------
+            Spacing(2);
+            ImGui::SeparatorText("Poisson Disk Sampling (PDS)");
+            Spacing(1);
+
+            ImGui::Checkbox("PDS Enabled", &context.pointsGenerationParameters.isPoissonEnabled);
+            ImGui::SliderFloat("PDS Range", &context.pointsGenerationParameters.poissonRadius, 0.01f, 10.0f);
+
             //-Randomization ----------------------------------------------
             Spacing(2);
             ImGui::SeparatorText("Randomization");

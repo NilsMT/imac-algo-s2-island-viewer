@@ -190,9 +190,11 @@ std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] P
 
 
 void generateObjectsPositions(AppContext& context) {
-    // std::vector<glm::vec2> const positions {generate2DPositions(context.pointsGenerationParameters)}; // original
-    std::vector<glm::vec2> const positions {generate2DPositionsPoissonDiskSampling(context.pointsGenerationParameters)};
-
+    std::vector<glm::vec2> const positions {
+        context.pointsGenerationParameters.isPoissonEnabled == true ?
+        generate2DPositionsPoissonDiskSampling(context.pointsGenerationParameters) :
+        generate2DPositions(context.pointsGenerationParameters)
+    };
 
     context.objectPositions.clear();
     context.objectPositions.reserve(positions.size());
