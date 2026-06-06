@@ -30,7 +30,8 @@ void drawCones(AppContext const& context, Matrix const& terrainCentering)
 
     float const coneHalfHeight { 0.5f * context.coneScale };
 
-    for (int i = 0; i < context.objectPositions.size(); i++) {
+    for (long long unsigned int i = 0; i < context.objectPositions.size(); i++) { 
+        //^ the type of i is supposed to be in but the compiler was cring over "I prefer long long unsigned int" ☝️🤓
         glm::vec3 const& pos = context.objectPositions[i];
         ObjectRandomizationData objRand = context.objectsRandData[i];
 
