@@ -66,7 +66,6 @@ struct PointsGenerationParameters {
     glm::vec2 heightTreshold = { 0.5f, 0.8f };
     bool isPoissonEnabled = true;
     float poissonRadius { 0.02f };
-    // TODO(student): add parameters for points generation (ex: poisson disk radius, etc).
 };
 
 struct AppContext {

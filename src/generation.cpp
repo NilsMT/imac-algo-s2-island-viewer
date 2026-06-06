@@ -25,26 +25,11 @@ std::vector<glm::vec2> generate2DPositions([[maybe_unused]] PointsGenerationPara
         );
     }
 
-    // TODO(student): implement Poisson disk sampling to replace the above naive random generation
-    // points output should be in [0..1] range, where (0,0) is one corner of the terrain and (1,1) is the opposite corner, so they can be easily scaled to terrain size and sampled from heightmap.
     return positions;
 }
 
-float random(float min, float max)
-{
-   return rand() / static_cast<float>(RAND_MAX) * (max - min) + min;
-}
-
 std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] PointsGenerationParameters const& params) {
-
-
-    // TODO(student): implement Poisson disk sampling to replace the above naive random generation ---> OK
-    // points output should be in [0..1] range, where (0,0) is one corner of the terrain and (1,1) is the opposite corner, so they can be easily scaled to terrain size and sampled from heightmap.
-    // return positions;
-
     // Choisir un point actif aléatoire
-    srand(time(0));
-
     float r = params.poissonRadius;
     float cellSize = r/sqrt(2);
     int k = 30; // k points candidats autour du point actif
@@ -75,8 +60,8 @@ std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] P
 
     // ETAPE 1
     // Choisir un point de départ aléatoire et l'ajouter à une liste de points actifs
-    float x = (rand() % 100) * 0.01;
-    float y = (rand() % 100) * 0.01;
+    float x = randF(0.0f,0.99f);
+    float y = randF(0.0f,0.99f);
     pointsActif.push_back({x, y});
     points.push_back({x, y});
 
@@ -89,7 +74,7 @@ std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] P
 
     while (!pointsActif.empty())
     {
-        int indexPointActifAleatoire = rand() % pointsActif.size();
+        int indexPointActifAleatoire = (int)(randF() * pointsActif.size());
         glm::vec2 pointActifAleatoire = pointsActif[indexPointActifAleatoire];
 
         bool candidatValide = false;
@@ -100,8 +85,8 @@ std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] P
             // POUR X
 
             // on prend un point aléatoire entre r et 2r
-            float radius = random(r, 2*r);
-            float angle = random(0, 2*PI);
+            float radius = randF(r, 2*r);
+            float angle = randF(0, 2*PI);
 
             // pour que ça soit plus propre, on va le placer de manière circulaire et non carré
             // et parce qu'on utilise cos et sin, ce point peut être situé tout autour du pointActif
@@ -187,7 +172,6 @@ std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] P
 
     return points;
 }
-
 
 void generateObjectsPositions(AppContext& context) {
     std::vector<glm::vec2> const positions {
