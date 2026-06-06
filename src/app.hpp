@@ -30,7 +30,7 @@ struct PointsGenerationParameters {
     bool isRotationRandom { true };
     glm::vec3 rotationOffset { 0.f, 360.f, 0.f };
     glm::vec2 heightTreshold = { 0.5f, 1.f };
-    float poissonRadius { 0.01f };
+    float poissonRadius { 0.02f };
     // TODO(student): add parameters for points generation (ex: poisson disk radius, etc).
 };
 

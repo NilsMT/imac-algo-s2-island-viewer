@@ -35,17 +35,11 @@ float random(float min, float max)
 }
 
 std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] PointsGenerationParameters const& params) {
-    /*
-        struct PointsGenerationParameters {
-        bool isScaleRandom { true };
-        glm::vec3 scaleOffset { 0.f, 0.5f, 0.f };
-        bool isRotationRandom { true };
-        glm::vec3 rotationOffset { 0.f, 360.f, 0.f };
-        glm::vec2 heightTreshold = { 0.5f, 1.f };
-        float poissonRadius { 1.0f };
-        // TODO(student): add parameters for points generation (ex: poisson disk radius, etc).
-        };
-    */
+
+
+    // TODO(student): implement Poisson disk sampling to replace the above naive random generation ---> OK
+    // points output should be in [0..1] range, where (0,0) is one corner of the terrain and (1,1) is the opposite corner, so they can be easily scaled to terrain size and sampled from heightmap.
+    // return positions;
 
     // Choisir un point actif aléatoire
     srand(time(0));
@@ -72,7 +66,7 @@ std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] P
 
 
 
-    vector<vector<float>> grille(grilleLargeur, vector<float>(grilleHauteur, -1.0f));
+    vector<vector<int>> grille(grilleLargeur, vector<int>(grilleHauteur, -1));
 
 
     std::vector<glm::vec2> points {};
@@ -84,68 +78,20 @@ std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] P
     float y = (rand() % 100) * 0.01;
     pointsActif.push_back({x, y});
     points.push_back({x, y});
-    cout << "patate " << x << " " << y << endl;
+
+    // on fait du hachage afin que les valeurs x-y proches tombe dans la même case
+    int grilleX = x / cellSize;
+    int grilleY = y / cellSize;
+    grille[grilleX][grilleY] = 0; // 0 car c'est le premier élément de notre index
 
 
 
-    if (!pointsActif.empty())
-    {
-        int indexPointActifAleatoire = rand() % pointsActif.size();
-        glm::vec2 pointActifAleatoire = pointsActif[indexPointActifAleatoire];
-
-        int nbPointsCandidatValide = 0;
-        for (int i = 0; i < k; ++i)
-        {
-            // (dans un anneau entre r et 2r, où r est la distance minimale
-            // on génère un nombre aléatoire entre -2r et 2r autour du point actif
-            // POUR X
-
-            // on prend un point aléatoire entre r et 2r
-            float radius = random(r, 2*r);
-            float angle = random(0, 2*PI);
-
-            // pour que ça soit plus propre, on va le placer de manière circulaire et non carré
-            // et parce qu'on utilise cos et sin, ce point peut être situé tout autour du pointActif
-            // ATTENTION x et y N'ONT RIEN À VOIR AVEC UNE POSITION SUR NOTRE GRILLE
-            float x = cos(angle);
-            float y = sin(angle);
-
-            // cout << x << " " << y << endl;
-
-            // on place un point aléatoirement autour du point actif
-            glm::vec2 pointCandidat = pointActifAleatoire + radius * glm::vec2{x, y}; // on le place sur l'axe x et y (formule :  x = radius * cos(alpha)   et y = radius * cos(alpha))
-
-            // on s'assure que le point candidat reste bien dans sa zone entre 0 et 1 en x et y.
-            // sinon, on ne rentre pas dans le if ce qui nous force à passer au point candidat suivant
-            if (pointCandidat.x >= 0.f && pointCandidat.x <= 1.f && pointCandidat.y >= 0.f && pointCandidat.y <= 1.f)
-            {
-                cout << pointCandidat.x << " -- " << pointCandidat.y << endl;
-
-                points.push_back({pointCandidat.x, pointCandidat.y});
-            }
-            else
-            {
-                cout << "KABOUM " << pointCandidat.x << " -- " << pointCandidat.y << endl;
-            }
-
-
-        }
-    }
-
-
-
-    // ETAPE 2
-    /*
-    // Tant que la liste de points actifs n'est pas vide:
     while (!pointsActif.empty())
     {
         int indexPointActifAleatoire = rand() % pointsActif.size();
         glm::vec2 pointActifAleatoire = pointsActif[indexPointActifAleatoire];
 
-
-        int nbPointsCandidatValide = 0;
-
-        // Générer jusqu'à k points candidats autour de ce point actif
+        bool candidatValide = false;
         for (int i = 0; i < k; ++i)
         {
             // (dans un anneau entre r et 2r, où r est la distance minimale
@@ -167,33 +113,44 @@ std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] P
 
             // on s'assure que le point candidat reste bien dans sa zone entre 0 et 1 en x et y.
             // sinon, on ne rentre pas dans le if ce qui nous force à passer au point candidat suivant
-            if (x >= 0.f && x <= 1.f && y >= 0.f && y <= 1.f)
+            if (pointCandidat.x >= 0.f && pointCandidat.x < 1.f && pointCandidat.y >= 0.f && pointCandidat.y < 1.f)
             {
-
-                cout << "x: " << x << " y: " << y << endl;
-
+                // cout << pointCandidat.x << " -- " << pointCandidat.y << endl;
 
                 bool distanceAuMoinsRDeTousLesPoints = true;
-                int j = 0;
 
-                // On parcourt tous les points déjà générés
-                while (distanceAuMoinsRDeTousLesPoints && j < points.size())
-                {
-                    glm::vec2 pointDejaGenererAComparer = points[j];
-                    float distance = sqrt(pow((pointCandidat.x - pointDejaGenererAComparer.x), 2) + pow((pointCandidat.y - pointDejaGenererAComparer.y), 2));
+                // Avec Bridson, pas besoin de tout parcourir, on va juste regarder les cases autour de notre pointCandidat
+                // pour voir s'il y a de la place.
+                // on va dire qu'on va regarder dans un rayon de deux cases.
+                int candidatGrilleX = pointCandidat.x / cellSize;
+                int candidatGrilleY = pointCandidat.y / cellSize;
 
-                    // si le point généré n'est pas dans une distance d'au moins r avec le point candidat
-                    if (distance < r)
-                    {
-                        distanceAuMoinsRDeTousLesPoints = false; // cela devient faux
+                int rVerif = 2; // rayon verif
+                int minCandidatGrilleX = (candidatGrilleX-rVerif >= 0) ? candidatGrilleX-rVerif : 0;
+                int maxCandidatGrilleX = (candidatGrilleX+rVerif < grilleLargeur-1) ? candidatGrilleX+rVerif : grilleLargeur-1;
+                int minCandidatGrilleY = (candidatGrilleY-rVerif >= 0) ? candidatGrilleY-rVerif : 0;
+                int maxCandidatGrilleY = (candidatGrilleY+rVerif < grilleHauteur-1) ? candidatGrilleY+rVerif : grilleHauteur-1;
+
+                for (int a = minCandidatGrilleX; a <= maxCandidatGrilleX; a++) {
+                    for (int o = minCandidatGrilleY; o <= maxCandidatGrilleY; o++) {
+                        if (grille[a][o] != -1)
+                        {
+                            // vu que grille[a][o] correspond à l'index du point déjà généré que l'on doit comparer
+                            glm::vec2 pointDejaGenererAComparer = points[grille[a][o]];
+                            float distance = sqrt(pow((pointCandidat.x - pointDejaGenererAComparer.x), 2) + pow((pointCandidat.y - pointDejaGenererAComparer.y), 2));
+
+                            // si le point généré n'est pas dans une distance d'au moins r avec le point candidat
+                            if (distance < r)
+                            {
+                                distanceAuMoinsRDeTousLesPoints = false; // cela devient faux
+                            }
+
+                        }
                     }
-
-                    j++;
-                    cout << "distance: " << distance << " --- r: " << r << " --- j: " << j << " --- points.size(): " << points.size() << "--- pointsActif.size(): " << pointsActif.size() << "       AAAAAAAAAAAAAAAAAAAA" << endl;
                 }
 
 
-                // Si un point candidat est à une distance d'au moins r de tous les points déjà générés,
+                // Si un point candidat n'a pas de voisin trop proche,
                 // l'ajouter à la liste de points actifs et à la liste finale de points.
                 // (donc si arrivé ici, distanceAuMoinsRDeTousLesPoints est toujours true)
 
@@ -205,37 +162,29 @@ std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] P
                     int grilleX = pointCandidat.x / cellSize;
                     int grilleY = pointCandidat.y / cellSize;
 
-                    if (grilleX >= 0.f && grilleX <= 1.f && grilleY >= 0.f && grilleY <= 1.f)
-                    {
-                        cout << "=== " << grilleX << "(" << pointCandidat.x << " / " << cellSize << ")" << ", " << grilleY << endl;
+                    grille[grilleX][grilleY] = points.size() - 1; // -1 car grille contient les indexs de la liste point, donc on indique l'index du point candidat
+                    candidatValide = true ;
+                    break;
 
-                        grille[grilleX][grilleY] = points.size();
-                        nbPointsCandidatValide++;
-                    }
                 }
-            }
-        }
 
+            }
+
+
+
+        }
         // Si après k essais (donc après notre boucle aucun point candidat n'est valide retirer le point actif de la liste
         // --> Jules pense que la condition n'est pas nécessaire et qu'on peut directectement retirer le point actif
         //      c'est pas faux que retenter en boucle 100 fois un point déjà étudié, n'a pas vraiment d'intérêt (même si c'est possiblement moins optimisé ainsi)
-        pointsActif.erase(pointsActif.begin() + indexPointActifAleatoire);
+        // MAIS vu que c'est demandé dans l'énoncé, on va le faire quand même
 
-
-        cout << pointsActif.size() << endl;
-
+        if (!candidatValide) {
+            pointsActif.erase(pointsActif.begin() + indexPointActifAleatoire);
+        }
     }
-*/
 
-    cout << "totototatatatututu " << points.size() << endl;
+
     return points;
-
-
-
-
-    // TODO(student): implement Poisson disk sampling to replace the above naive random generation ---> OK
-    // points output should be in [0..1] range, where (0,0) is one corner of the terrain and (1,1) is the opposite corner, so they can be easily scaled to terrain size and sampled from heightmap.
-    // return positions;
 }
 
 
