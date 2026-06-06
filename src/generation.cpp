@@ -52,14 +52,15 @@ std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] P
 
     float r = params.poissonRadius;
     float cellSize = r/sqrt(2);
-    int k = 100; // k points candidats autour du point actif
+    int k = 30; // k points candidats autour du point actif
     //int r = 5; // r est la distance minimale
 
     // Dans la vidéo https://www.youtube.com/watch?v=7WcmyxyFO7o, il y a une variable s'appelant sampleRegionSize.
     // Dans notre cas, nos points varie entre 0 et 1 pour simplifier, de ce fait, on peut remplacer la variable
     // sampleRegionSize par 1
 
-    // int grid[1/cellSize][1/cellSize];
+
+    // ETAPE 0
     int grilleLargeur = ceil(1.f / cellSize);
     int grilleHauteur = ceil(1.f / cellSize);
 
@@ -69,18 +70,72 @@ std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] P
         << " largeur=" << grilleLargeur
         << '\n';
 
-    vector<vector<float>> grille(grilleLargeur, vector<float>(grilleHauteur, 0.0f));
+
+
+    vector<vector<float>> grille(grilleLargeur, vector<float>(grilleHauteur, -1.0f));
 
 
     std::vector<glm::vec2> points {};
-    std::vector<glm::vec2> pointsActif {};
+    std::vector<glm::vec2> pointsActif {}; // liste des points avec les quels ont travail
 
-
+    // ETAPE 1
     // Choisir un point de départ aléatoire et l'ajouter à une liste de points actifs
-    pointsActif.push_back({0.5, 0.5});
-    points.push_back({0.5, 0.5});
+    float x = (rand() % 100) * 0.01;
+    float y = (rand() % 100) * 0.01;
+    pointsActif.push_back({x, y});
+    points.push_back({x, y});
+    cout << "patate " << x << " " << y << endl;
 
 
+
+    if (!pointsActif.empty())
+    {
+        int indexPointActifAleatoire = rand() % pointsActif.size();
+        glm::vec2 pointActifAleatoire = pointsActif[indexPointActifAleatoire];
+
+        int nbPointsCandidatValide = 0;
+        for (int i = 0; i < k; ++i)
+        {
+            // (dans un anneau entre r et 2r, où r est la distance minimale
+            // on génère un nombre aléatoire entre -2r et 2r autour du point actif
+            // POUR X
+
+            // on prend un point aléatoire entre r et 2r
+            float radius = random(r, 2*r);
+            float angle = random(0, 2*PI);
+
+            // pour que ça soit plus propre, on va le placer de manière circulaire et non carré
+            // et parce qu'on utilise cos et sin, ce point peut être situé tout autour du pointActif
+            // ATTENTION x et y N'ONT RIEN À VOIR AVEC UNE POSITION SUR NOTRE GRILLE
+            float x = cos(angle);
+            float y = sin(angle);
+
+            // cout << x << " " << y << endl;
+
+            // on place un point aléatoirement autour du point actif
+            glm::vec2 pointCandidat = pointActifAleatoire + radius * glm::vec2{x, y}; // on le place sur l'axe x et y (formule :  x = radius * cos(alpha)   et y = radius * cos(alpha))
+
+            // on s'assure que le point candidat reste bien dans sa zone entre 0 et 1 en x et y.
+            // sinon, on ne rentre pas dans le if ce qui nous force à passer au point candidat suivant
+            if (pointCandidat.x >= 0.f && pointCandidat.x <= 1.f && pointCandidat.y >= 0.f && pointCandidat.y <= 1.f)
+            {
+                cout << pointCandidat.x << " -- " << pointCandidat.y << endl;
+
+                points.push_back({pointCandidat.x, pointCandidat.y});
+            }
+            else
+            {
+                cout << "KABOUM " << pointCandidat.x << " -- " << pointCandidat.y << endl;
+            }
+
+
+        }
+    }
+
+
+
+    // ETAPE 2
+    /*
     // Tant que la liste de points actifs n'est pas vide:
     while (!pointsActif.empty())
     {
@@ -170,6 +225,7 @@ std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] P
         cout << pointsActif.size() << endl;
 
     }
+*/
 
     cout << "totototatatatututu " << points.size() << endl;
     return points;
