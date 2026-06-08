@@ -300,7 +300,7 @@ struct App {
 ### Les problèmes et les résolutions
 
 Les problèmes ont été rencontrés sur plusieurs parties du projets, et avec une complexité différente.
-La plupart du temps, la solution était trouvé grâce à internet, notre cerveau ou grâce au chargé de TD.
+La plupart du temps, la solution était trouvé grâce à internet, notre cerveau, grâce au chargé de TD ou en message privé avec le chargé de projet (🫵 toi).
 
 ### Avec plus de temps
 
