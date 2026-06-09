@@ -43,6 +43,9 @@ Matthieu FARANDJIS, Nils MOREAU--THOMAS
         - [La 2ème solution](#la-2ème-solution)
         - [Le 3ème problème](#le-3ème-problème)
         - [La 3ème solution](#la-3ème-solution)
+    - [Le crash aléatoire](#le-crash-aléatoire)
+        - [Le problème](#le-problème-4)
+        - [La solution](#la-solution-4)
 - [VII - Captures d'écrans comparatives](#vii---captures-décrans-comparatives)
 - [VIII - Post-mortem](#viii---post-mortem)
     - [Les problèmes et les résolutions](#les-problèmes-et-les-résolutions)
@@ -411,6 +414,27 @@ mais aussi et surtout, de commenter un maximum. C'est-à-dire, ce que ça repré
 
 Parce qu'il est beaucoup trop facile de comprendre une partie évidente de l'algorithme, et d'avoir un doute.
 Alors le fait de commenter même les évidences, c'est un moyen d'être sûr d'avoir tout en tête pour bien comprendre ce que l'on fait.
+
+## Le crash aléatoire
+
+### Le problème
+
+L'application crashait de manière aléatoire, la cause en théorie c'étaits l'énorme quantité de calculs (les crashs étaient observées pendant des tests avec beaucoups de bruits et d'octaves)
+
+### La solution
+
+Et bien en fait non ! C'était la faute de l'aléatoire, celui-ci atteignait le maximum alors qu'il ne faut pas l'atteindre.
+De plus un morceau de l'algorithme de poisson prenait un index aléatoire... Ou un index inexistant :
+
+```cpp
+ int indexPointActifAleatoire = (int)(randF() * pointsActif.size());
+```
+
+Qui désormais est :
+
+```cpp
+int indexPointActifAleatoire = (int)randF(0.0f, pointsActif.size() - 1);
+```
 
 # VII - Captures d'écrans comparatives
 
