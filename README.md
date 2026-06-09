@@ -125,8 +125,6 @@ Il est recommandé d'utiliser l'extension `VS Code` [Todo Tree](https://marketpl
 
 Il est aussi recommandé d'utiliser l'`Outline` dans le panneau de droite de `VS Code`.
 
-Il est possible que le projet crash dû aux calculs trop demandants sur, majoritairement, les octaves avec une pile de bruit.
-
 # IV - Choix algorithmiques
 
 ## Color map
