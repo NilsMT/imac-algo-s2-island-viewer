@@ -74,10 +74,8 @@ std::vector<glm::vec2> generate2DPositionsPoissonDiskSampling([[maybe_unused]] P
 
     while (!pointsActif.empty())
     {
-        size_t indexPointActifAleatoire = static_cast<size_t>(randF() * pointsActif.size());
-        if (indexPointActifAleatoire >= pointsActif.size()) {
-            indexPointActifAleatoire = pointsActif.size() - 1;
-        }
+        int indexPointActifAleatoire = (int)(randF() * (pointsActif.size() - 1));
+        
         glm::vec2 pointActifAleatoire = pointsActif[indexPointActifAleatoire];
 
         bool candidatValide = false;
