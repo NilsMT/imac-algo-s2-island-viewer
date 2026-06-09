@@ -123,39 +123,39 @@ Il est recommandé d'utiliser l'extension `VS Code` [Todo Tree](https://marketpl
 
 > ℹ️ : Avec `NOTE:` et `SOURCE:` d'ajoutée dans [todo-tree.general.tags](vscode://settings/todo-tree.general.tags)
 
-Il est aussi recommandé d'utiliser l'`Outline` dans le panneau de droite de `VS Code`
+Il est aussi recommandé d'utiliser l'`Outline` dans le panneau de droite de `VS Code`.
 
-Il y a des fichiers qui ont des indentations bizarres à cause d'un formatage qui s'est mal passé (en faisant Ctrl + P et puis format document)
+Il est possible que le projet crash dû aux calculs trop demandants sur, majoritairement, les octaves avec une pile de bruit.
 
 # IV - Choix algorithmiques
 
 ## Color map
 
-Pour la coloration de la carte, Nils a décidé de faire une color map (palette de coloration) d'après une image comme pour le [⭐⭐⭐⭐⭐⭐ Diamond Square](https://github.com/NilsMT/imac-wk-prog-algo-1/blob/main/EXOS.md#-diamond-square) pendant le Workshop de Prog Algo 1 qui mappe une valeur de la heightmap (0-1) à un pixel de la color map :
+Pour la coloration de la carte, J'ai (Nils) décidé de faire une color map (palette de coloration) d'après une image comme pour le [⭐⭐⭐⭐⭐⭐ Diamond Square](https://github.com/NilsMT/imac-wk-prog-algo-1/blob/main/EXOS.md#-diamond-square) pendant le Workshop de Prog Algo 1 qui mappe une valeur de la heightmap (0-1) à un pixel de la color map :
 
 ![](./img/color_map.png)
 
 avec une interpolation linéaire (qui peut se désactiver) si la valeur ne correspond pas parfaitement à un pixel
 
-| Avec                     | Sans                   |
-| ------------------------ | ---------------------- |
-| ![](./img/with_lerp.png) | ![](./img/no_lerp.png) |
+| Avec                                 | Sans                               |
+| ------------------------------------ | ---------------------------------- |
+| ![](./img/comparisons/with_lerp.png) | ![](./img/comparisons/no_lerp.png) |
 
 ## Masque
 
-Un masque sélectionnable a été choisi pour générer une île de manière personnalisable, le meilleur masque restant quand même Gaussien (pour avoir une forme circulaire)
+Un masque sélectionnable a été choisi pour générer une île de manière personnalisable, le meilleur masque restant quand même Gaussien (pour avoir une forme circulaire).
 
 Cela a été décidé car nous avions plusieurs bruits à disposition alors pourquoi pas en faire une fonctionnalité pour à la fois la pile de bruit et le masque.
 
-Bien que cela ne soit que très peu utile
+Bien que cela ne soit que très peu utile.
 
 ## ImGui local
 
 La librairie ImGui est stocké en local car, il y avait besoin d'un objet d'interface [slider-range2](https://github.com/Entrpi/imgui/tree/feature/slider-range2) qui n'était pas disponible mais déjà développé par quelqu'un.
 
-La conséquence c'est que le projet est un poil plus gros sur GitHub
+La conséquence c'est que le projet est un plus gros en taille.
 
-> (PS: le fetch-content dans le CMake ne marchait pas sur ce repo pour une raison obscure)
+> (PS: le fetch-content dans le CMake ne marchait pas sur ce repo pour une raison obscure).
 
 ## Poisson disk sampling
 
@@ -166,13 +166,13 @@ Seulement, la version avec tableau (version de Bridson's) permet à l'algorithme
 
 ## Color map
 
-Comme dit précédement, il a été choisi de permettre une sélection de la palette de couleur de la carte (et il est facile d'en ajouter une) pour avoir plusieurs types de "biomes"
+Comme dit précédement, il a été choisi de permettre une sélection de la palette de couleur de la carte (et il est facile d'en ajouter une) pour avoir plusieurs types de "biomes".
 
 Résultat : plusieurs visages pour une même île
 
-| cm_mesa_32             | cm_island_16             | cm_elevation_16             |
-| ---------------------- | ------------------------ | --------------------------- |
-| ![](./img/cm_mesa.png) | ![](./img/cm_island.png) | ![](./img/cm_elevation.png) |
+| cm_mesa_32                         | cm_island_16                         | cm_elevation_16                         |
+| ---------------------------------- | ------------------------------------ | --------------------------------------- |
+| ![](./img/comparisons/cm_mesa.png) | ![](./img/comparisons/cm_island.png) | ![](./img/comparisons/cm_elevation.png) |
 
 > Fun fact : les color map ont un chiffre à la fin de leurs nom qui correspond à la largeur de l'image (donc `cm_mesa_32` à un plus grande palette de couleur que `cm_island_16`)
 
@@ -180,17 +180,17 @@ Résultat : plusieurs visages pour une même île
 
 Des paramètres ont été ajoutés pour faire varier la taille et l'orientation des objets placés, ce qui rend le rendu plus naturel.
 
-| Avec                       | Sans                     |
-| -------------------------- | ------------------------ |
-| ![](./img/with_random.png) | ![](./img/no_random.png) |
+| Avec                                   | Sans                                 |
+| -------------------------------------- | ------------------------------------ |
+| ![](./img/comparisons/with_random.png) | ![](./img/comparisons/no_random.png) |
 
 ## Intervalle de spawn
 
 Un intervalle de hauteur de spawn a été intégré pour conditionner le placement des objets et éviter, par exemple, les objets trop hauts dans les montagnes ou en mer.
 
-| Avec                           | Sans                         |
-| ------------------------------ | ---------------------------- |
-| ![](./img/with_spawnrange.png) | ![](./img/no_spawnrange.png) |
+| Avec                                       | Sans                                     |
+| ------------------------------------------ | ---------------------------------------- |
+| ![](./img/comparisons/with_spawnrange.png) | ![](./img/comparisons/no_spawnrange.png) |
 
 ## Bruit fractal
 
@@ -206,9 +206,9 @@ La valeur peut être diminuée pour observer des différences, mais au-delà d'u
 
 Par défaut, la valeur est fixée à 1. L'interface permet de la modifier. Voici un comparatif :
 
-| octave = 1                    | octave = 4                    | octave = 8                    |
-| ----------------------------- | ----------------------------- | ----------------------------- |
-| ![](img/fractal_octave_1.png) | ![](img/fractal_octave_4.png) | ![](img/fractal_octave_8.png) |
+| octave = 1                                | octave = 4                                | octave = 8                                |
+| ----------------------------------------- | ----------------------------------------- | ----------------------------------------- |
+| ![](img/comparisons/fractal_octave_1.png) | ![](img/comparisons/fractal_octave_4.png) | ![](img/comparisons/fractal_octave_8.png) |
 
 Pour observer cette différence dans l'interface :
 
@@ -223,9 +223,9 @@ De ce fait, le paramètre radio "params.poissonRadius" par exemple ne peut pas �
 
 La valeur 0,2 a été retenue comme compromis afin d'éviter des points trop proches tout en conservant un nombre suffisant de points.
 
-| radius = 1                    | radius = 0.2                    |
-| ----------------------------- | ------------------------------- |
-| ![](img/poisson_radius_1.png) | ![](img/poisson_radius_0-2.png) |
+| radius = 1                                | radius = 0.2                                |
+| ----------------------------------------- | ------------------------------------------- |
+| ![](img/comparisons/poisson_radius_1.png) | ![](img/comparisons/poisson_radius_0-2.png) |
 
 Dans [la vidéo de Sebastian League](https://www.youtube.com/watch?v=7WcmyxyFO7o), la variable `sampleRegionSize` correspond à la taille de la zone.
 Dans cette implémentation, la taille de la carte est normalisée à 1.
@@ -265,13 +265,13 @@ Cette structure contient les offsets de position et de rotation pour chaque obje
 L'interface initiale affichait tous les contrôles dans une seule fenêtre, ce qui devenait difficile à lire.
 La pile de bruit ajoutait de nombreuses lignes et alourdissait la lisibilité.
 
-![](./img/old_menu.png)
+![](./img/comparisons/menu_old.png)
 
 ### La solution
 
 L'interface a été réorganisée en sous-menus, avec des codes couleur et des sections dédiées à chaque catégorie de paramètres.
 
-![](./img/new_menu.gif)
+![](./img/comparisons/menu_new.gif)
 
 ## L'échec du Diamond Square et des bruits matriciels
 
@@ -417,6 +417,9 @@ Alors le fait de commenter même les évidences, c'est un moyen d'être sûr d'a
 # VII - Captures d'écrans comparatives
 
 Aucune capture supplémentaire pertinente n'est disponible en dehors de celles déjà présentes dans ce rapport.
+Les images sont toutes disponibles dans [img/comparisons/](./img/comparisons/) avec des noms de la forme `<critère>_<valeur>` ou `<with|no>_<critère>`
+
+> Comme `with_lerp` et `no_lerp` ou `menu_old` et `menu_new`
 
 # VIII - Post-mortem
 
