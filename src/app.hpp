@@ -24,7 +24,7 @@ struct AppContext;
 using NoiseFunction = std::function<float(glm::vec2 const&, AppContext const&)>;
 
 struct Noise {
-    int nbOctave {1};
+    int nbOctave {1}; // nombre d'octave pour le bruit fractal (remis par Matthieu le 09/06/2026
     float scale {5.f};
     int type { NoiseType::NONE };
 };

@@ -1,59 +1,95 @@
-Le rapport doit contenir :
+Matthieu FARANDJIS, Nils MOREAU--THOMAS<br>
+E3 IMAC
 
-- sous quelle plateforme vous avez développé le projet (Linux, Windows, macOS)
-- les choix algorithmiques faits
-- les paramètres retenus et leur impact visuel
-- les difficultés rencontrées et solutions
-- quelques captures d'écran comparatives
+<div align="center">
+<img height="80" src="https://upload.wikimedia.org/wikipedia/fr/thumb/c/cf/Logo-esiee-Paris-UGE.svg/3840px-Logo-esiee-Paris-UGE.svg.png" title="logo esiee"/>
+<img height="80" src="resources/logo_imac.png" title="logo imac"/>
 
-Ajoutez enfin une partie "Post mortem" pour analyser le travail fourni :
+# Island Viewer
 
-- qu'est-ce qui a bien fonctionné, quels ont été les problèmes rencontrés
-- comment vous les avez surmontés, et ce que vous auriez fait différemment.
-- Avec plus de temps, qu'est-ce que vous pourriez ajouter ?
-- Comment s'est passée la répartition du travail dans le groupe ?
+---
 
-Le rapport doit être concis (par exemple 2 à 5 pages sans les illustrations).
+<br>
+Présentation de notre projet de Prog&Algo (semestre 2).
+<br>
+
+</div>
+
+<br><br><br>
+
+
+---
+
 
 # Sommaire
 
 - [Sommaire](#sommaire)
-- [Plateforme et structures](#plateforme-et-structures)
-- [Liste des tâches](#liste-des-tâches)
-- [Informations supplémentaires](#informations-supplémentaires)
-- [Rapport](#rapport)
-    - [Choix algorithmiques](#choix-algorithmiques)
+- [I - Plateforme et structures](#i---plateforme-et-structures)
+- [II - Liste des tâches](#ii---liste-des-tâches)
+- [III - Informations supplémentaires](#iii---informations-supplémentaires)
+- [IV - Rapport](#iv---rapport)
+    - [1. Choix algorithmiques](#1-choix-algorithmiques)
         - [Color map](#color-map)
         - [Masque](#masque)
         - [ImGui local](#imgui-local)
-    - [Paramètres et impact visuel](#paramètres-et-impact-visuel)
+        - [Bruit fractal](#bruit-fractal)
+        - [Poisson Disk Sampling](#poisson-disk-samping)
+    - [2. Paramètres et impact visuel](#2-paramètres-et-impact-visuel)
         - [Color map](#color-map-1)
         - [Aléatoire](#aléatoire)
         - [Intervalle de spawn](#intervalle-de-spawn)
-    - [Difficultés et solutions](#difficultés-et-solutions)
-        - [Le Simplex qui marchait pas](#le-simplex-qui-marchait-pas)
+        - [Bruit fractal](#bruit-fractal-1)
+        - [Poisson Disk Sampling](#poisson-disk-sampling-1)
+    - [3. Difficultés et solutions](#3-difficultés-et-solutions)
+        - [a) Le Simplex qui marchait pas](#a-le-simplex-qui-marchait-pas)
             - [Le problème](#le-problème)
             - [La solution](#la-solution)
-        - [Les objets qui font n'importe quoi](#les-objets-qui-font-nimporte-quoi)
+        - [b) Les objets qui font n'importe quoi](#b-les-objets-qui-font-nimporte-quoi)
             - [Le problème](#le-problème-1)
             - [La solution](#la-solution-1)
-        - [L'interface pas ergonomique](#linterface-pas-ergonomique)
+        - [c) L'interface pas ergonomique](#c-linterface-pas-ergonomique)
             - [Le problème](#le-problème-2)
             - [Solution](#solution)
-        - [L'échec de l'ajout du Diamond Square (et des bruits matriciels)](#léchec-de-lajout-du-diamond-square-et-des-bruits-matriciels)
+        - [d)L'échec de l'ajout du Diamond Square (et des bruits matriciels)](#d-léchec-de-lajout-du-diamond-square-et-des-bruits-matriciels)
             - [Avant](#avant)
             - [Le problème](#le-problème-3)
             - [Ce qu'on a fait](#ce-quon-a-fait)
             - [Pourquoi c'est pas idéal](#pourquoi-cest-pas-idéal)
-    - [Captures d'écrans comparatives](#captures-décrans-comparatives)
-    - [Post-mortem](#post-mortem)
+        - [e) Poisson Disk Sampling](#e-poisson-disk-sampling)
+            - [Le problème : mauvaise implémentation de l'algorithme](#le-problème--mauvaise-implémentation-de-lalgorithme)
+            - [La solution : demander des explications à Jules FOUCHY et réécrire le code étape par étape](#la-solution--demander-des-explications-à-jules-fouchy-et-réécrire-le-code-étape-par-étape)
+            - [Le problème : le temps d'exécution](#le-problème--le-temps-dexécution)
+            - [La solution : implémenter la version de Bridson](#la-solution--implémenter-la-version-de-bridson)
+            - [Le problème : la confusion avec les x et y](#le-problème--la-confusion-avec-les-x-et-y)
+            - [La solution : besoin de clarté](#la-solution--besoin-de-clarté)
+    - [4. Captures d'écrans comparatives](#4-captures-décrans-comparatives)
+    - [5. Post-mortem](#5-post-mortem)
         - [Les problèmes et les résolutions](#les-problèmes-et-les-résolutions)
         - [Avec plus de temps](#avec-plus-de-temps)
         - [Répartition du travail](#répartition-du-travail)
 
-# Plateforme et structures
 
-Le projet a été développé sur Windows
+<br><br><br><br>
+
+---
+
+# I - Plateforme et structures
+
+Le projet a été développé sur Windows et Linux (Ubuntu) à l'aide de Microsoft Visual Studio Code et Jetbrains CLion<br>
+<br>
+Configuration de Matthieu :
+  - Ubuntu 24.04.4 LTS 64bits
+    - CLion
+  - Microsoft Windows 11 Home 25H2 (26200.8457) 64bits
+    - CLion 2025.2.3 (Build #CL-252.26830.83, built on October 1, 2025)
+  - CPU : AMD Ryzen 5 7535HS, RAM : 16Go, GPU : NVIDIA GeForce RTX 4050 Laptop GPU (6 GB)
+    
+  <br><br>
+Configuration de Nils :
+   - Windows 11
+     - Visual Studio Code
+
+
 
 ```
 ├─── 📁 bin : exécutables
@@ -70,7 +106,11 @@ Le projet a été développé sur Windows
     └─── 📄 noise : fichiers pour la génération des bruits
 ```
 
-# Liste des tâches
+<br><br><br><br>
+
+---
+
+# II - Liste des tâches
 
 > 🚧 : En cours ✅ : Fini ❌ : À faire
 > ♒ : Amélioration supplémentaire ☑️ : Amélioration de l'énoncé
@@ -96,7 +136,12 @@ Le projet a été développé sur Windows
 | ❌   | -         | ☑️   | Connecter les îles avec des ponts, ou par la terre                  |      | -        |
 | ❌   | -         | ☑️   | Génération de différentes formes d'îles (au moins 3)                |      | -        |
 
-# Informations supplémentaires
+
+<br><br><br><br>
+
+---
+
+# III - Informations supplémentaires
 
 > Extension pratique pour naviguer dans des endroits du code sur `VS Code` :<br>
 > [Todo Tree](https://marketplace.visualstudio.com/items?itemName=Gruntfuggly.todo-tree)<br>
@@ -106,9 +151,14 @@ Le projet a été développé sur Windows
 
 > Il y a des fichiers qui ont des indentations bizarres à cause d'un formatage qui s'est mal passé (en faisant Ctrl + P et puis format document)
 
-# Rapport
+<br><br><br><br>
 
-## Choix algorithmiques
+---
+
+
+# IV - Rapport
+
+## 1. Choix algorithmiques
 
 ### Color map
 
@@ -142,7 +192,17 @@ La conséquence c'est que le projet est un poil plus gros sur GitHub
 
 (PS: le fetch-content dans le CMake ne marchait pas sur ce repo pour une raison obscure)
 
-## Paramètres et impact visuel
+
+### Bruit fractal
+J'ai (Matthieu) fais le plus simple, j'ai effectué le bruit fractal en choisissant le bruit Perlin comme bruit de base.
+
+### Poisson disk sampling
+Concernant le Poisson disk sampling, j'avais commencé à créer une version sans tableau (qui n'est donc pas la version de Bridson's).<br>
+Seulement, la version avec tableau (version de Bridson's) permet à l'algorithme de s'exécuter plus rapidement, c'est la version la plus populaire et la plus recommender, alors j'ai fini par l'implémenter (sachant qu'elle est demandé dans le sujet du projet). 
+
+<br><br><br>
+
+## 2. Paramètres et impact visuel
 
 ### Color map
 
@@ -156,9 +216,54 @@ Il a été décidé d'ajouter des paramètres sur le placement aléatoire des ob
 
 Un intervalle de hauteur de spawn autorisé a été codé pour permettre une condition de placement pour, par exemple, éviter d'avoir des objets trop haut dans les montagnes, ou dans la mer.
 
-## Difficultés et solutions
+### Bruit fractal
+Concernant le bruit fractal, ses paramètres sont complexes.<br>
+Voici une description des paramètres venant de l'article https://thebookofshaders.com/13/?lan=fr : 
+*En ajoutant différentes itérations du bruit (différentes octaves), dont on augmente la fréquence (la lacunarité) et dont*
+*on réduit l'amplitude (le gain), on obtient une granularité qui nous permet de préserver les détails fins d'un bruit.*
 
-### Le Simplex qui marchait pas
+J'ai (Matthieu) estimé qu'un nombre correct d'octaves est 6, c'est un bon nombre, cela permet d'avoir une carte suffisamment détaillée sans que cela prenne trop de temps pour la génération.<br>
+Nous pouvons diminuer ce nombre pour constater des différences, cependant, si on l'augmente, les modifications seront quasiment invisible.<br>
+Par défaut, nous avons laissé cette valeur à 1, mais grâce à l'interface, nous pouvons la changer. Voici un comparatif : 
+
+<div align="center">
+<img height="300" src="resources/fractal_octave_1.png" title="bruit fractal avec en octave 1"/>
+<img height="300" src="resources/fractal_octave_4.png" title="bruit fractal avec en octave 4"/>
+<img height="300" src="resources/fractal_octave_8.png" title="bruit fractal avec en octave 8"/>
+
+De gauche à droite les valeurs d'octaves sont : 1, 4, 8
+</div>
+
+Pour tester cette différence il suffit sur l'interface :
+1. Dans le menu Heigh Map -> désactiver Random Seed
+2. Dans le menu Noise -> faire varier le nombre d'octaves
+3. Dans Actions -> faire "Regenerate All"
+
+À noter que même si j'ai (Matthieu) travaillé à partir du bruit de Perlin, l'interface propose d'autres types de bruit.
+
+
+### Poisson disk sampling
+La taille de notre carte varie de 0 à 1 selon notre code, contrairement au code des vidéos partagé dans le sujet du rapport ou des articles trouvables sur internet.<br>
+De ce fait, le paramètre radio "params.poissonRadius" par exemple ne peut pas être de 1 puisqu'il indique le rayon entre les points (pour résumer, dans les faits, ce n'est pas exactement ça).<br>
+J'ai (Matthieu) choisit 0,2 comme valeur, car cela me paraissait à la fois suffisamment grand pour que les points ne soient pas collés, et suffisamment petit pour qu'il y ait assez de points.<br>
+
+
+<div align="center">
+<img height="300" src="resources/poisson_radius_1.png" title="radius 1"/>
+<img height="300" src="resources/poisson_radius_0-2.png" title="radius 0.2"/>
+
+Radius de 1 à gauche, radius de 0.2 à droite
+</div>
+
+De même, dans la vidéo de Sebastian Lague, il utilise une variable appelée sampleRegionSize (ce qui correspond à la taille de carte),
+sauf que dans notre cas, il nous suffit d'indiquer juste 1.
+
+
+<br><br><br>
+
+## 3. Difficultés et solutions
+
+### a) Le Simplex qui marchait pas
 
 #### Le problème
 
@@ -173,7 +278,7 @@ Cependant après avoir adapté le code, il y avait un problème : le bruit se r�
 Après avoir crié à l'aide au chargé de TD, qui n'a pas trouvé la solution car le code était une exacte copie de ce que l'article avait,
 la solution était toute simple, malgré des heures de tirage de cheveux : le code n'initialisait pas la liste de permutations (ce qui fait en sorte que le bruit est un bruit)
 
-### Les objets qui font n'importe quoi
+### b) Les objets qui font n'importe quoi
 
 #### Le problème
 
@@ -185,7 +290,7 @@ la solution était toute simple, malgré des heures de tirage de cheveux : le co
 
 À la construction de la carte et du placement des points, les données aléatoires de placement ont été stockées dans une liste de `ObjectRandomizationData` disponible dans le `context` de l'application. Cette structure contient la modification de la position et la rotation de base de l'objet, pour chacun. Résultat : on récupère la donnée générée et stockée bien avant, ce qui ne la change pas à chaque frame.
 
-### L'interface pas ergonomique
+### c) L'interface pas ergonomique
 
 #### Le problème
 
@@ -200,7 +305,7 @@ Il a donc été décidé de refaire l'interface sous forme de sous-menus avec de
 
 ![](./img/new_menu.gif)
 
-### L'échec de l'ajout du Diamond Square (et des bruits matriciels)
+### d) L'échec de l'ajout du Diamond Square (et des bruits matriciels)
 
 Le code de l'échec est dans la branche [diamond-square-attempt](https://github.com/NilsMT/imac-algo-s2-island-viewer/tree/diamond-square-attempt)
 
@@ -288,9 +393,57 @@ struct App {
 - Une `noiseMatrixStack` séparée dans `AppContext` stocke les résultats des algos matriciels, ce qui crée une désynchronisation potentielle avec la `noiseStack`
     > une option plus simple aurait été de générer la matrice pour chaque position au lieu de tout stocker une fois, mais niveau performance c'est catastrophique
 
-## Captures d'écrans comparatives
 
-## Post-mortem
+### e) Poisson Disk Sampling
+
+#### Le problème : mauvaise implémentation de l'algorithme
+Mon principal problème était un temps d'exécution très long et le fait de ne pas savoir si l'algorithme fonctionnait bien.
+Mais ce problème était lier au fait que je n'implémentais pas la version de Bridson's, je voulais aller vite et que j'avais mal appréhendé le problème.
+
+
+#### La solution : demander des explications à Jules FOUCHY et réécrire le code étape par étape
+L'une des premières pistes était de demander de l'aide à Jules FOUCHY, notamment pour me réexpliquer certains points de l'algorithme (tel qu'afficher les points candidats
+de manière cyclique autour du point actif et non dans un carré), de regarder des versions d'algorithme dans d'autres langages, mais surtout de reconstruire l'algorithme étape par étape.<br>
+<br>
+Reconstruire étape par étape c'était ce que faisait The Coding Train dans sa vidéo :
+- J'ai commencé à afficher un point aléatoire sur la carte
+- Affiché les points candidats autour de ce point
+  - Ici, je me suis aperçus que l'un des pourquoi cela ne marchait pas, c'était le radius trop grand. Cela m'a permis de réajuster la valeur de la variable proprement.
+
+J'ai ainsi pu constater le bon fonctionnement de l'algorithme à ce stade, et continuer progressivement.<br>
+
+<br><br>
+#### Le problème : le temps d'exécution
+Parce que je n'utilisais pas la version de Bridson, plutôt que de m'aider d'un tableau pour comparer un point candidat avec les points périphérie,
+je comparais le point candidat avec TOUS les points de la carte en parcourant une liste.<br>
+A petite échelle, ça allait, à grande échelle, cela prenait tellement de temps, que je pouvais difficilement constater le résultat.
+
+#### La solution : implémenter la version de Bridson
+Et donc, remplacer ma liste par un tableau où les points d'une certaine zone se retrouve dans une même case.<br>
+Si on constate que la case du tableau associé à notre zone comporte déjà un point (car marqué 0 et non plus -1 (-1 signifiant que c'est vide)),
+nous ne pouvons pas placer notre point candidat (la zone est déjà occupé).<br>
+C'est plus complexe à mettre en place, mais l'autre méthode n'était viable.
+
+<br><br>
+#### Le problème : la confusion avec les x et y
+Avec la version de Bridson, je manipule un tableau (donc on utilise x et y), mais également des points sur la carte (on utilise aussi des x et y),
+et on compare des points sur la carte, dans les listes, dans le tableau, en d'autre terme, il y a plusieurs x et y dans l'algorithme, mais chacune ont un rôle différent.<br>
+<br>
+De ce fait, il est très simple de confondre des variables notamment quand on regarde le code de quelqu'un d'autres (articles sur internet ou vidéos sur internet).<br>
+
+#### La solution : besoin de clarté
+La solution a été de donner des noms de variable explicite comme `candidatGrilleX`, d'utiliser directement `pointCandidat.x` sans les stockés dans des variables,
+mais aussi et surtout, de commenter un maximum. C'est-à-dire, ce que ça représente, à quoi cela correspond, même si cela peut paraître évident.<br>
+Parce qu'il est beaucoup trop facile de comprendre une partie évidente de l'algorithme, et d'avoir un doute.
+Alors le fait de commenter même les évidences, c'est un moyen d'être sûr d'avoir tout en tête pour bien comprendre ce que l'on fait. 
+
+<br><br><br>
+
+## 4. Captures d'écrans comparatives
+
+Nous n'avons pas de capture intéressante à montrer hormis celles déjà présente dans ce rapport.
+
+## 5. Post-mortem
 
 - qu'est-ce qui a bien fonctionné, quels ont été les problèmes rencontrés ✅
 - comment vous les avez surmontés, et ce que vous auriez fait différemment.✅

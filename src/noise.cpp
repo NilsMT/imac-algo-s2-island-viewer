@@ -198,6 +198,16 @@ float gaussianNoise(glm::vec2 const& position, AppContext const& context) {
 //octave noise
 
 float octaveNoise(int nbOctave, glm::vec2 const& position, AppContext const& context, NoiseFunction noiseFunction) {
+    // (ce commentaire a disparu, je viens de le remettre - Matthieu le 09/06/2026)
+    // noiseFunction est la fonction que l'on passe en entrée à notre fonction
+    // en fait, permet de dire quel fonction de bruit on veut utiliser si on en a plusieurs
+    // par exemple : perlinNoise
+    // Remarque : je me suis fondé sur le code de l'article suivant : https://thebookofshaders.com/13/?lan=fr
+    // (ce n'est pas un copier-coller du code, cet article m'a permis de mieux comprendre celui-ci, je juge pertinent de
+    // laisser ce commentaire puisque c'est une explication de ce que j'ai compris en travaillant dessus.
+    // Sauf que si ça m'a aidé en travaillant dessus, ça peut toujours m'aider en le relisant plus tard.
+
+
     float value = 0.0f;
     float amplitude = 1.0f;
     float accA = 0.0f; //accumaltor to normalize afterward
